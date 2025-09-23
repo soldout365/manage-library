@@ -1,4 +1,3 @@
-// File này VẪN CẦN và quan trọng
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { UserType } from '@/types/user.type'

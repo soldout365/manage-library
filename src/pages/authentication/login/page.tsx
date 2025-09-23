@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input'
 import { Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
 import { useLogin } from '@/hooks/auth/useLogin'
+import { Link } from 'react-router-dom'
+import { toast } from 'sonner'
 
 const loginFormSchema = z.object({
 	username: z.string().min(2, {
@@ -33,10 +35,15 @@ const LoginPage = () => {
 
 	// 2. Define a submit handler.
 	const onSubmit = async (values: z.infer<typeof loginFormSchema>) => {
-		login({
-			username: values.username,
-			password: values.password
-		})
+		login(
+			{
+				username: values.username,
+				password: values.password
+			},
+			{
+				onError: () => toast.error('Đăng nhập thất bại !')
+			}
+		)
 	}
 
 	return (
@@ -104,10 +111,8 @@ const LoginPage = () => {
 					<div className='p-8 pt-2 max-h-[calc(100vh-200px)] overflow-y-auto'>
 						{/* ✅ Hiển thị error message nếu có */}
 						{error && (
-							<div className='mb-4 p-3 bg-red-50 border border-red-200 rounded-lg'>
-								<p className='text-red-600 text-sm font-medium'>
-									{error.message || 'Đăng nhập thất bại'}
-								</p>
+							<div className='mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center justify-center'>
+								<p className='text-red-600 text-sm font-medium'>{'Đăng nhập thất bại'}</p>
 							</div>
 						)}
 
@@ -177,14 +182,17 @@ const LoginPage = () => {
 						</Form>
 
 						{/* Forgot Password Link */}
-						<div className='text-right mt-6'>
-							<button
-								className='text-sm text-amber-600 hover:text-amber-800 hover:underline transition-colors duration-200 font-medium disabled:opacity-50'
-								disabled={isPending}
-							>
-								Quên mật khẩu?
-							</button>
-						</div>
+
+						<Link to='/forgot-password'>
+							<div className='text-right mt-6'>
+								<button
+									className='text-sm text-amber-600 hover:text-amber-800 hover:underline transition-colors duration-200 font-medium disabled:opacity-50'
+									disabled={isPending}
+								>
+									Quên mật khẩu?
+								</button>
+							</div>
+						</Link>
 
 						{/* Divider */}
 						<div className='relative mt-8'>
