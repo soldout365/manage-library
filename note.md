@@ -20,13 +20,13 @@ B4: mở file eslint.config.js
 -> các bạn import cái này vào đầu file `eslint.config.js`
 
 ```ts
-import eslintPluginPrettier from "eslint-plugin-prettier";
+import eslintPluginPrettier from 'eslint-plugin-prettier'
 ```
 
 -> thêm đoạn code sau vào object `plugins`
 
 ```ts
-prettier: eslintPluginPrettier;
+prettier: eslintPluginPrettier
 ```
 
 -> thêm đoạn code sau vào object `rules` để thêm các rule của prettier
@@ -51,50 +51,50 @@ prettier: eslintPluginPrettier;
 -> kết quả file `eslint.config.js` là:
 
 ```ts
-import eslintPluginPrettier from "eslint-plugin-prettier";
-import { globalIgnores } from "eslint/config";
-import globals from "globals";
-import js from "@eslint/js";
-import reactHooks from "eslint-plugin-react-hooks";
-import reactRefresh from "eslint-plugin-react-refresh";
-import tseslint from "typescript-eslint";
+import eslintPluginPrettier from 'eslint-plugin-prettier'
+import { globalIgnores } from 'eslint/config'
+import globals from 'globals'
+import js from '@eslint/js'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+import tseslint from 'typescript-eslint'
 
 export default tseslint.config([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      js.configs.recommended,
-      tseslint.configs.recommended,
-      reactHooks.configs["recommended-latest"],
-      reactRefresh.configs.vite,
-    ],
-    languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
-    },
-    ignores: ["vite.config.ts"],
-    plugins: {
-      prettier: eslintPluginPrettier,
-    },
-    rules: {
-      "prettier/prettier": [
-        "warn",
-        {
-          arrowParens: "always",
-          semi: false,
-          trailingComma: "none",
-          tabWidth: 4,
-          endOfLine: "auto",
-          useTabs: true,
-          singleQuote: true,
-          printWidth: 120,
-          jsxSingleQuote: true,
-        },
-      ],
-    },
-  },
-]);
+	globalIgnores(['dist']),
+	{
+		files: ['**/*.{ts,tsx}'],
+		extends: [
+			js.configs.recommended,
+			tseslint.configs.recommended,
+			reactHooks.configs['recommended-latest'],
+			reactRefresh.configs.vite
+		],
+		languageOptions: {
+			ecmaVersion: 2020,
+			globals: globals.browser
+		},
+		ignores: ['vite.config.ts'],
+		plugins: {
+			prettier: eslintPluginPrettier
+		},
+		rules: {
+			'prettier/prettier': [
+				'warn',
+				{
+					arrowParens: 'always',
+					semi: false,
+					trailingComma: 'none',
+					tabWidth: 4,
+					endOfLine: 'auto',
+					useTabs: true,
+					singleQuote: true,
+					printWidth: 120,
+					jsxSingleQuote: true
+				}
+			]
+		}
+	}
+])
 ```
 
 B5: Config prettier để format code
@@ -103,15 +103,15 @@ B5: Config prettier để format code
 
 ```json
 {
-  "arrowParens": "always",
-  "semi": false,
-  "trailingComma": "none",
-  "tabWidth": 4,
-  "endOfLine": "auto",
-  "useTabs": true,
-  "singleQuote": true,
-  "printWidth": 120,
-  "jsxSingleQuote": true
+	"arrowParens": "always",
+	"semi": false,
+	"trailingComma": "none",
+	"tabWidth": 4,
+	"endOfLine": "auto",
+	"useTabs": true,
+	"singleQuote": true,
+	"printWidth": 120,
+	"jsxSingleQuote": true
 }
 ```
 
@@ -156,22 +156,22 @@ cấu hình alias và enable trong file `vite.config.ts`
 code
 
 ```ts
-import { defineConfig } from "vite";
-import path from "path";
-import react from "@vitejs/plugin-react-swc";
+import { defineConfig } from 'vite'
+import path from 'path'
+import react from '@vitejs/plugin-react-swc'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
-  server: {
-    port: 4200,
-  },
-  resolve: {
-    alias: {
-      "~": path.resolve(__dirname, "./src"),
-    },
-  },
-});
+	plugins: [react()],
+	server: {
+		port: 4200
+	},
+	resolve: {
+		alias: {
+			'~': path.resolve(__dirname, './src')
+		}
+	}
+})
 ```
 
 B9: cập nhật `script` cho `package.json`
@@ -188,3 +188,8 @@ B9: cập nhật `script` cho `package.json`
 - `npm run lint:fix`: kiểm tra dự án có lỗi và tự động fix các lỗi liên quan ESLint
 - `npm run prettier`: kiểm tra dự án có lỗi gì liên quan đến prettier hay không
 - `npm run prettier:fix`: tự động fix các lỗi liên quan đến prettier
+
+cach prompt
+yeu cau mong muon ?(ex : toi mong muon tao hook, call den api nay , mo ta chi tiet cai luong chay )
+dau vao (co nhung gi : type -> api -> hook -> page)
+dau ra(sau khi khaiB thanh cong se sd o page`code`)

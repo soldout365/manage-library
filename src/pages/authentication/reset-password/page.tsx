@@ -1,33 +1,71 @@
 'use client'
 
+import { authApis } from '@/apis/auth.api'
+import { required } from '@/lib/validate'
+import type { ResetPasswordForm } from '@/types/auth.type'
 import type React from 'react'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { useAsyncFn } from 'react-use'
 import { toast } from 'sonner'
+import ForgotPassPage from '../forgot-password/page'
 
 const ResetPassword: React.FC = () => {
-	const [newPassword, setNewPassword] = useState('')
-	const [confirmPassword, setConfirmPassword] = useState('')
+	const [search] = useSearchParams()
+
+	const [{ loading }, resetpasswordService] = useAsyncFn(authApis.resetpassword, [])
+
 	const [showNewPass, setShowNewPass] = useState(false)
 	const [showConfirmPass, setShowConfirmPass] = useState(false)
 
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault()
-		// UI only - no API call
-		if (newPassword !== confirmPassword) {
-			toast.error('Mật khẩu không khớp')
+	const token = search.get('token')
+
+	const navigate = useNavigate()
+
+	const {
+		register,
+		handleSubmit,
+		watch,
+		formState: { errors }
+	} = useForm<ResetPasswordForm>({
+		defaultValues: { newPassword: '', confirmNewPassword: '' }
+	})
+
+	const newPassword = watch('newPassword')
+	const confirmNewPassword = watch('confirmNewPassword')
+
+	const onSubmit = async (data: ResetPasswordForm) => {
+		if (!token) {
+			toast.error('Token không hợp lệ!')
 			return
 		}
-		console.log('Reset password:', newPassword)
-		toast.success('Đặt lại mật khẩu thành công!')
+
+		if (data.newPassword !== data.confirmNewPassword) {
+			toast.error('Mật khẩu xác nhận không khớp!')
+			return
+		}
+
+		try {
+			const requestData = {
+				newPassword: data.newPassword,
+				resetToken: token
+			}
+
+			const res = await resetpasswordService(requestData)
+			console.log(res)
+			toast.success('Đặt lại mật khẩu thành công!')
+			navigate('/')
+		} catch (error) {
+			toast.error('Có lỗi xảy ra. Vui lòng thử lại sau!')
+		}
 	}
 
-	return (
+	return token ? (
 		<div
 			className='h-screen max-h-screen overflow-hidden flex'
 			style={{ height: '100vh', maxHeight: '100vh', overflow: 'hidden' }}
 		>
-			{/* Left side - Background Image - Hidden on mobile */}
 			<div
 				className='hidden lg:block flex-1 bg-cover bg-center bg-no-repeat relative'
 				style={{
@@ -51,9 +89,7 @@ const ResetPassword: React.FC = () => {
 				</div>
 			</div>
 
-			{/* Right side - Reset Password Form - Full width on mobile */}
 			<div className='w-full lg:flex-1 lg:max-w-md xl:max-w-lg bg-gradient-to-bl from-amber-50/95 to-orange-50/95 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 relative overflow-hidden'>
-				{/* Background pattern for form side */}
 				<div className='absolute inset-0 opacity-10'>
 					<div className='absolute top-16 right-8 w-20 h-20 sm:w-24 sm:h-24 border-2 border-amber-600 rounded-full'></div>
 					<div className='absolute top-40 left-8 sm:left-12 w-12 h-12 sm:w-16 sm:h-16 border border-amber-500 rounded-lg rotate-45'></div>
@@ -81,7 +117,7 @@ const ResetPassword: React.FC = () => {
 
 					{/* Form */}
 					<div className='p-8 pt-2 max-h-[calc(100vh-200px)] overflow-y-auto'>
-						<form onSubmit={handleSubmit} className='space-y-6'>
+						<form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
 							<div>
 								<label htmlFor='newPassword' className='block text-sm font-semibold text-gray-700 mb-2'>
 									Mật khẩu mới
@@ -90,9 +126,9 @@ const ResetPassword: React.FC = () => {
 									<input
 										id='newPassword'
 										type={showNewPass ? 'text' : 'password'}
-										required
-										value={newPassword}
-										onChange={(e) => setNewPassword(e.target.value)}
+										{...register('newPassword', {
+											...required('Vui lòng nhập mật khẩu')
+										})}
 										className='w-full h-12 px-4 pr-12 border border-amber-200 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white/80 backdrop-blur-sm transition-all duration-200'
 										placeholder='Nhập mật khẩu mới...'
 									/>
@@ -145,15 +181,15 @@ const ResetPassword: React.FC = () => {
 									htmlFor='confirmPassword'
 									className='block text-sm font-semibold text-gray-700 mb-2'
 								>
-									Mã đặt lại mật khẩu
+									Xác nhận mật khẩu mới
 								</label>
 								<div className='relative'>
 									<input
 										id='confirmPassword'
 										type={showConfirmPass ? 'text' : 'password'}
-										required
-										value={confirmPassword}
-										onChange={(e) => setConfirmPassword(e.target.value)}
+										{...register('confirmNewPassword', {
+											...required('Xác nhận mật khẩu mới ')
+										})}
 										className='w-full h-12 px-4 pr-12 border border-amber-200 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white/80 backdrop-blur-sm transition-all duration-200'
 										placeholder='Nhập mã xác nhận...'
 									/>
@@ -202,16 +238,17 @@ const ResetPassword: React.FC = () => {
 							</div>
 
 							{/* Password match indicator */}
-							{confirmPassword && (
+							{confirmNewPassword && (
 								<div
-									className={`text-sm ${newPassword === confirmPassword ? 'text-green-600' : 'text-red-600'}`}
+									className={`text-sm ${newPassword === confirmNewPassword ? 'text-green-600' : 'text-red-600'}`}
 								>
-									{newPassword === confirmPassword ? '✓ Mật khẩu khớp' : '✗ Mật khẩu không khớp'}
+									{newPassword === confirmNewPassword ? '✓ Mật khẩu khớp' : '✗ Mật khẩu không khớp'}
 								</div>
 							)}
 
 							<button
 								type='submit'
+								disabled={loading}
 								className='w-full h-12 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold transition-all duration-200 shadow-lg shadow-amber-200 rounded-xl'
 							>
 								Đặt lại mật khẩu
@@ -238,25 +275,12 @@ const ResetPassword: React.FC = () => {
 						</div>
 
 						{/* Alternative Actions */}
-						<div className='space-y-4 mt-8'>
-							<Link
-								to='/forgot-password'
-								className='w-full h-12 border border-amber-300 hover:bg-amber-50 hover:border-amber-400 transition-all duration-200 bg-white/70 backdrop-blur-sm rounded-xl flex items-center justify-center text-amber-700 font-medium'
-							>
-								Quên mật khẩu? Gửi email đặt lại
-							</Link>
-
-							{/* <Link
-								to='/login'
-								className='w-full h-12 border border-amber-300 hover:bg-amber-50 hover:border-amber-400 transition-all duration-200 bg-white/70 backdrop-blur-sm rounded-xl flex items-center justify-center text-amber-700 font-medium'
-							>
-								Đã có mật khẩu? ĐĂNG NHẬP NGAY
-							</Link> */}
-						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+	) : (
+		<ForgotPassPage />
 	)
 }
 

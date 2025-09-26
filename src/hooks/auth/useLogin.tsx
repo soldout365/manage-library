@@ -15,21 +15,15 @@ export const useLogin = () => {
 	const result = useMutation({
 		mutationKey: ['login'],
 		mutationFn: async (payload: LoginRequest) => {
-			const loginResponse = await authApis.login(payload)
-			const { access_token } = loginResponse
+			return await authApis.login(payload)
 
-			if (!access_token) {
-				navigate('/login')
-				throw new Error('No access token received')
-			}
-
-			return { access_token, loginResponse }
+			//return gi thi data ben duoi success nhan vao
 		},
 
 		onSuccess: async (data) => {
 			try {
 				const userInfo = await userApis.getInfoCurrentUser(data.access_token)
-				console.log('User info:', userInfo)
+				console.log(data)
 
 				if (userInfo.role !== 'admin') {
 					clearAuth()
@@ -41,14 +35,12 @@ export const useLogin = () => {
 				setUser(userInfo)
 				navigate('/')
 			} catch (error) {
-				console.error('Lỗi', error)
 				clearAuth()
 				navigate('/login')
 			}
 		},
 
 		onError: (error) => {
-			console.error('❌ Lỗi ', error)
 			clearAuth()
 		}
 	})

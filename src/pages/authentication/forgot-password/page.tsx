@@ -1,16 +1,33 @@
 'use client'
 
 import type React from 'react'
-import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
+import { useAsyncFn } from 'react-use'
+import { authApis } from '@/apis/auth.api'
+import type { ForgotPasswordRequest } from '@/types/auth.type'
+import { regexp, required } from '@/lib/validate'
 
 const ForgotPassPage: React.FC = () => {
-	const [email, setEmail] = useState('')
+	const [{ loading }, forgotpasswordService] = useAsyncFn(authApis.forgotpassword, [])
 
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault()
-		toast.success(`Reset link sent to ${email}`)
+	const {
+		register,
+		handleSubmit,
+		formState: { errors }
+	} = useForm<ForgotPasswordRequest>({
+		defaultValues: { email: '' }
+	})
+
+	const onSubmit = async (data: ForgotPasswordRequest) => {
+		try {
+			const res = await forgotpasswordService(data)
+			console.log(res)
+			toast.success('Đã gửi mã đặt lại mật khẩu đến email của bạn!')
+		} catch (error) {
+			toast.error('Có lỗi xảy ra. Vui lòng thử lại sau!')
+		}
 	}
 
 	return (
@@ -18,7 +35,6 @@ const ForgotPassPage: React.FC = () => {
 			className='h-screen max-h-screen overflow-hidden flex'
 			style={{ height: '100vh', maxHeight: '100vh', overflow: 'hidden' }}
 		>
-			{/* Left side - Background Image - Hidden on mobile */}
 			<div
 				className='hidden lg:block flex-1 bg-cover bg-center bg-no-repeat relative'
 				style={{
@@ -42,9 +58,7 @@ const ForgotPassPage: React.FC = () => {
 				</div>
 			</div>
 
-			{/* Right side - Forgot Password Form - Full width on mobile */}
 			<div className='w-full lg:flex-1 lg:max-w-md xl:max-w-lg bg-gradient-to-bl from-amber-50/95 to-orange-50/95 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 relative overflow-hidden'>
-				{/* Background pattern for form side */}
 				<div className='absolute inset-0 opacity-10'>
 					<div className='absolute top-16 right-8 w-20 h-20 sm:w-24 sm:h-24 border-2 border-amber-600 rounded-full'></div>
 					<div className='absolute top-40 left-8 sm:left-12 w-12 h-12 sm:w-16 sm:h-16 border border-amber-500 rounded-lg rotate-45'></div>
@@ -52,7 +66,6 @@ const ForgotPassPage: React.FC = () => {
 					<div className='absolute bottom-48 left-6 sm:left-8 w-16 h-16 sm:w-20 sm:h-20 border-2 border-orange-500 rounded-lg rotate-12'></div>
 				</div>
 
-				{/* Main card */}
 				<div className='w-full max-w-sm bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 relative z-10 mx-auto'>
 					{/* Header */}
 					<div className='text-center space-y-3 p-8 pb-6'>
@@ -72,7 +85,7 @@ const ForgotPassPage: React.FC = () => {
 
 					{/* Form */}
 					<div className='p-8 pt-2 max-h-[calc(100vh-200px)] overflow-y-auto'>
-						<form onSubmit={handleSubmit} className='space-y-6'>
+						<form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
 							<div>
 								<label htmlFor='email' className='block text-sm font-semibold text-gray-700 mb-2 pl-1'>
 									Địa chỉ Email
@@ -80,19 +93,24 @@ const ForgotPassPage: React.FC = () => {
 								<input
 									id='email'
 									type='email'
-									required
-									value={email}
-									onChange={(e) => setEmail(e.target.value)}
+									{...register('email', {
+										...required('Vui lòng nhập email'),
+										...regexp('email')
+									})}
 									className='w-full h-12 px-4 border border-amber-200 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white/80 backdrop-blur-sm transition-all duration-200'
 									placeholder='Nhập địa chỉ email...'
 								/>
+								{errors.email && (
+									<p className='text-red-500 text-sm mt-1 pl-1'>{errors.email.message}</p>
+								)}
 							</div>
 
 							<button
 								type='submit'
+								disabled={loading}
 								className='w-full h-12 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold transition-all duration-200 shadow-lg shadow-amber-200 rounded-xl'
 							>
-								Gửi mã đặt lại mật khẩu
+								{loading ? 'Đang gửi...' : 'Gửi mã'}
 							</button>
 						</form>
 
@@ -113,22 +131,6 @@ const ForgotPassPage: React.FC = () => {
 							<div className='relative flex justify-center text-xs uppercase'>
 								<span className='bg-white px-3 py-1 text-amber-700 font-medium rounded-full'>hoặc</span>
 							</div>
-						</div>
-
-						{/* Alternative Actions */}
-						<div className='space-y-4 mt-8'>
-							<Link
-								to='/reset-password'
-								className='w-full h-12 border border-amber-300 hover:bg-amber-50 hover:border-amber-400 transition-all duration-200 bg-white/70 backdrop-blur-sm rounded-xl flex items-center justify-center text-amber-700 font-medium'
-							>
-								Đặt lại mật khẩu
-							</Link>
-							{/* <Link
-								to='/login'
-								className='w-full h-12 border border-amber-300 hover:bg-amber-50 hover:border-amber-400 transition-all duration-200 bg-white/70 backdrop-blur-sm rounded-xl flex items-center justify-center text-amber-700 font-medium'
-							>
-								Đã có mật khẩu? ĐĂNG NHẬP NGAY
-							</Link> */}
 						</div>
 					</div>
 				</div>

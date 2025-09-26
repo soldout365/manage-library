@@ -1,3 +1,4 @@
+import { confirm } from './../lib/validate'
 import type { UserType } from './user.type'
 
 export interface LoginResponse {
@@ -18,12 +19,32 @@ export interface AuthState {
 	clearAuth: () => void
 }
 
-// export interface AuthContextType {
-// 	accessToken: string | null
-// 	// user: UserType | null
+export interface ChangePasswordRequest {
+	currentPassword: string
+	newPassword: string
+}
 
-// 	// isAuthenticated: boolean
+export interface ChangePasswordForm {
+	currentPassword: string
+	newPassword: string
+	confirmNewPassword: string
+}
 
-// 	login: (username: string, password: string) => Promise<void>
-// 	logout: () => void
-// }
+export interface ForgotPasswordRequest {
+	email: string
+}
+export interface ForgotPasswordResponse {
+	message: string
+}
+
+export interface ResetPasswordRequest {
+	newPassword: string
+	resetToken: string
+}
+export interface ResetPasswordForm {
+	newPassword: string
+	confirmNewPassword: string
+}
+export interface ResetPasswordResponse {
+	message: string
+}

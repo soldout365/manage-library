@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import React, { useState } from 'react'
 import {
 	BookOpen,
@@ -37,8 +36,10 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { toast } from 'sonner'
 import { useLogin } from '@/hooks/auth/useLogin'
+import { useNavigate } from 'react-router-dom'
 
 const Dashboard = () => {
+	const navigate = useNavigate()
 	const { logout } = useLogin()
 	const [activeModule, setActiveModule] = useState('dashboard')
 	const [sidebarOpen, setSidebarOpen] = useState(true)
@@ -215,6 +216,9 @@ const Dashboard = () => {
 									<DropdownMenuSeparator />
 									<DropdownMenuItem onClick={() => toast.success('Thông tin cá nhân')}>
 										Thông tin cá nhân
+									</DropdownMenuItem>
+									<DropdownMenuItem onClick={() => navigate('change-password')}>
+										Đổi mật khẩu
 									</DropdownMenuItem>
 									<DropdownMenuItem onClick={logout} className='text-red-600'>
 										Đăng xuất

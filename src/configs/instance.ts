@@ -4,6 +4,17 @@ const axiosInstance = axios.create({
 	timeout: 5000,
 	headers: { 'Content-Type': 'application/json' }
 })
+
+axiosInstance.interceptors.request.use((config) => {
+	const authData = localStorage.getItem('authStore')
+	if (authData) {
+		const token = JSON.parse(authData)?.state?.accessToken
+		if (token) {
+			config.headers.Authorization = `Bearer ${token}`
+		}
+	}
+	return config
+})
 //
 // axiosInstance.interceptors.request.use(
 // 	(config: InternalAxiosRequestConfig) => {

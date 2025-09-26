@@ -30,7 +30,11 @@ const routes = createBrowserRouter([
 
 	{
 		path: '/change-password',
-		element: <ChangePassPage />
+		element: (
+			<PrivateRouter>
+				<ChangePassPage />
+			</PrivateRouter>
+		)
 	},
 	{
 		path: '/',

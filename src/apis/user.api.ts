@@ -9,7 +9,6 @@ export const userApis = {
 				Accept: 'application/json'
 			}
 		})
-		console.log('Get Current User API Response:', res)
 		return res.data
 	}
 }
