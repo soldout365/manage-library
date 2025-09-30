@@ -3,15 +3,12 @@
 import type React from 'react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
-import { toast } from 'sonner'
-import { useAsyncFn } from 'react-use'
-import { authApis } from '@/apis/auth.api'
 import type { ForgotPasswordRequest } from '@/types/auth.type'
 import { regexp, required } from '@/lib/validate'
+import { useForgotPassword } from '@/hooks/auth/useForgotPassword'
 
 const ForgotPassPage: React.FC = () => {
-	const [{ loading }, forgotpasswordService] = useAsyncFn(authApis.forgotpassword, [])
-
+	const { forgotPasswordAsync, isLoading, reset } = useForgotPassword()
 	const {
 		register,
 		handleSubmit,
@@ -21,13 +18,11 @@ const ForgotPassPage: React.FC = () => {
 	})
 
 	const onSubmit = async (data: ForgotPasswordRequest) => {
-		try {
-			const res = await forgotpasswordService(data)
-			console.log(res)
-			toast.success('Đã gửi mã đặt lại mật khẩu đến email của bạn!')
-		} catch (error) {
-			toast.error('Có lỗi xảy ra. Vui lòng thử lại sau!')
-		}
+		forgotPasswordAsync(data, {
+			onSuccess: () => {
+				reset()
+			}
+		})
 	}
 
 	return (
@@ -107,10 +102,10 @@ const ForgotPassPage: React.FC = () => {
 
 							<button
 								type='submit'
-								disabled={loading}
+								disabled={isLoading}
 								className='w-full h-12 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold transition-all duration-200 shadow-lg shadow-amber-200 rounded-xl'
 							>
-								{loading ? 'Đang gửi...' : 'Gửi mã'}
+								{isLoading ? 'Đang gửi...' : 'Gửi mã'}
 							</button>
 						</form>
 

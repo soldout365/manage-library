@@ -1,7 +1,6 @@
-import React from 'react'
 import { Book, Users, Calendar, Plus, UserCheck, AlertTriangle, CheckCircle, RefreshCw } from 'lucide-react'
 
-const DashboardOverview = ({ dashboardStats, currentUser }) => {
+const DashboardOverview = ({ dashboardStats, currentUser }: any) => {
 	return (
 		<div className='space-y-6'>
 			{/* Header */}

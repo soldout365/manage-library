@@ -1,7 +1,7 @@
 //hook đen page den api
 //
 import { authApis } from '@/apis/auth.api'
-import type { ChangePasswordForm, ChangePasswordRequest } from '@/types/auth.type'
+import type { ChangePasswordRequest } from '@/types/auth.type'
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'

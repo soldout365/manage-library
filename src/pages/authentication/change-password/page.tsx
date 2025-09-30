@@ -32,10 +32,9 @@ const ChangePasswordPage: React.FC = () => {
 			toast.error('Mật khẩu xác nhận không khớp!')
 			return
 		}
-		const data2 = { currentPassword: data.currentPassword, newPassword: data.newPassword }
-		changePasswordAsync(data2, {
+		const payload = { currentPassword: data.currentPassword, newPassword: data.newPassword }
+		changePasswordAsync(payload, {
 			onSuccess: () => {
-				console.log('fdsd')
 				resetForm()
 				reset() // Reset mutation state
 			}

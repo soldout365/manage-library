@@ -214,12 +214,10 @@ const Dashboard = () => {
 
 								<DropdownMenuContent className='w-48'>
 									<DropdownMenuSeparator />
-									<DropdownMenuItem onClick={() => toast.success('Thông tin cá nhân')}>
+									<DropdownMenuItem onClick={() => navigate('/user-info')}>
 										Thông tin cá nhân
 									</DropdownMenuItem>
-									<DropdownMenuItem onClick={() => navigate('change-password')}>
-										Đổi mật khẩu
-									</DropdownMenuItem>
+
 									<DropdownMenuItem onClick={logout} className='text-red-600'>
 										Đăng xuất
 									</DropdownMenuItem>

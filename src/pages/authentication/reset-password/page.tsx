@@ -1,34 +1,25 @@
 'use client'
 
-import { authApis } from '@/apis/auth.api'
 import { required } from '@/lib/validate'
-import type { ResetPasswordForm } from '@/types/auth.type'
+import type { ResetPasswordForm, ResetPasswordRequest } from '@/types/auth.type'
 import type React from 'react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { useAsyncFn } from 'react-use'
+import { Link, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import ForgotPassPage from '../forgot-password/page'
+import { useResetPassword } from '@/hooks/auth/useResetPassword'
 
 const ResetPassword: React.FC = () => {
+	const { resetPasswordAsync, isLoading, reset } = useResetPassword()
 	const [search] = useSearchParams()
-
-	const [{ loading }, resetpasswordService] = useAsyncFn(authApis.resetpassword, [])
 
 	const [showNewPass, setShowNewPass] = useState(false)
 	const [showConfirmPass, setShowConfirmPass] = useState(false)
 
 	const token = search.get('token')
 
-	const navigate = useNavigate()
-
-	const {
-		register,
-		handleSubmit,
-		watch,
-		formState: { errors }
-	} = useForm<ResetPasswordForm>({
+	const { register, handleSubmit, watch } = useForm<ResetPasswordForm>({
 		defaultValues: { newPassword: '', confirmNewPassword: '' }
 	})
 
@@ -45,20 +36,12 @@ const ResetPassword: React.FC = () => {
 			toast.error('Mật khẩu xác nhận không khớp!')
 			return
 		}
-
-		try {
-			const requestData = {
-				newPassword: data.newPassword,
-				resetToken: token
+		const payload: ResetPasswordRequest = { newPassword: data.newPassword, resetToken: token }
+		await resetPasswordAsync(payload, {
+			onSuccess: () => {
+				reset()
 			}
-
-			const res = await resetpasswordService(requestData)
-			console.log(res)
-			toast.success('Đặt lại mật khẩu thành công!')
-			navigate('/')
-		} catch (error) {
-			toast.error('Có lỗi xảy ra. Vui lòng thử lại sau!')
-		}
+		})
 	}
 
 	return token ? (
@@ -248,7 +231,7 @@ const ResetPassword: React.FC = () => {
 
 							<button
 								type='submit'
-								disabled={loading}
+								disabled={isLoading}
 								className='w-full h-12 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold transition-all duration-200 shadow-lg shadow-amber-200 rounded-xl'
 							>
 								Đặt lại mật khẩu

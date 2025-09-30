@@ -10,6 +10,7 @@ import BooksManagement from './pages/home/manage-book/page'
 import ReadersManagement from './pages/home/manage-reader/page'
 import BorrowManagement from './pages/home/manage-borrow/page'
 import DashboardOverview from './pages/home/overview/page'
+import UserInfoPage from './pages/home/user-info/page'
 const routes = createBrowserRouter([
 	{
 		path: '/login',
@@ -41,6 +42,14 @@ const routes = createBrowserRouter([
 		element: (
 			<PrivateRouter>
 				<Dashboard />
+			</PrivateRouter>
+		)
+	},
+	{
+		path: '/user-info',
+		element: (
+			<PrivateRouter>
+				<UserInfoPage />
 			</PrivateRouter>
 		)
 	}
