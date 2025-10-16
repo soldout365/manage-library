@@ -1,39 +1,43 @@
+import type { QueryParamsType } from './common.type'
+import type { ReaderType } from './reader.type'
+
+export enum EAccountStatus {
+	BANNED = 'banned',
+	ACTIVE = 'active',
+	SUSPENDED = 'suspended'
+}
+
+export enum ERole {
+	ADMIN = 'admin',
+	READER = 'reader'
+}
+
+export type GetUsersParamsType = QueryParamsType & {
+	type?: ERole
+	search?: string
+}
+
 export type UserType = {
 	id: string
 	userCode: string
 	username: string
 	email: string
-	role: 'admin' | 'reader'
-	accountStatus: 'active' | 'suspended' | 'banned'
+	role: ERole
+	accountStatus: EAccountStatus
 	lastLogin: string
 	createdAt: string
 	updatedAt: string
 }
 
-export interface CurrentUserResponse {
-	id: string
-	userCode: string
-	username: string
-	email: string
-	role: 'admin' | 'reader'
-	accountStatus: 'active' | 'suspended' | 'banned'
-	lastLogin: string
-	createdAt: string
-	updatedAt: string
+export type CreateUserType = Pick<UserType, 'userCode' | 'username' | 'email' | 'role' | 'accountStatus'> & {
+	password: string
 }
 
-export interface UpdateUserRequest {
-	username?: string
-	userCode?: string
+export type CreateReaderForUserType = Pick<
+	ReaderType,
+	'fullName' | 'dob' | 'gender' | 'address' | 'phone' | 'cardNumber' | 'cardIssueDate' | 'cardExpiryDate'
+> & {
+	readerTypeName: string
 }
-export interface UpdateUserInfoForm {
-	fullName: string
-	userCode: string
-	email: string
-	gender: string
-	dob: string
-	phone: string
-	address: string
-	cardIssueDate: string
-	cardExpiryDate: string
-}
+
+export type UpdateUserType = Pick<UserType, 'username' | 'email' | 'role' | 'accountStatus' | 'userCode'>

@@ -2,7 +2,7 @@
 // call truc tiep den api
 
 import { authApis } from '@/apis/auth.api'
-import { userApis } from '@/apis/user.api'
+import { userApi } from '@/apis/user.api'
 import { useAuthStore } from '@/stores/auth.store'
 import type { LoginRequest } from '@/types/auth.type'
 import { useMutation } from '@tanstack/react-query'
@@ -22,7 +22,7 @@ export const useLogin = () => {
 
 		onSuccess: async (data) => {
 			try {
-				const userInfo = await userApis.getInfoCurrentUser(data.access_token)
+				const userInfo = await userApi.getUser(data.access_token)
 				console.log(data)
 
 				if (userInfo.role !== 'admin') {

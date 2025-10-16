@@ -1,61 +1,44 @@
-export interface ReaderType {
-	id: string
-	typeName: string
-	maxBorrowLimit: number
+import type { QueryParamsType } from './common.type'
+import type { ReaderTypes } from './reader-types.type'
+import type { UserType } from './user.type'
+
+export type GetReadersParamsType = QueryParamsType & {
+	cardNumber?: string
+	cardExpiryDateFrom?: string
+	cardExpiryDateTo?: string
+	phone?: string
+	search?: string
 }
 
-export interface Reader {
+export type ReaderType = {
 	id: string
-	user: {
-		id: string
-		username: string
-		email: string
-	}
-	readerType: ReaderType
-	fullName: string
-	dob: string
-	gender: string
-	address: string
-	phone: string
-	cardNumber: string
-	cardIssueDate: string
-	cardExpiryDate: string
-	isActive: boolean
-	createdAt: string
-	updatedAt: string
-}
-
-export interface ReaderByUserIdResponse {
-	id: string
-	user: {
-		id: string
-		username: string
-		email: string
-	}
-	readerType: ReaderType
-	fullName: string
-	dob: string
-	gender: string
-	address: string
-	phone: string
-	cardNumber: string
-	cardIssueDate: string
-	cardExpiryDate: string
-	isActive: boolean
-	createdAt: string
-	updatedAt: string
-}
-
-// Update request types
-export interface UpdateReaderRequest {
-	readerTypeId?: string
+	user: Pick<UserType, 'id' | 'username' | 'email'>
+	readerType: Pick<ReaderTypes, 'id' | 'typeName' | 'maxBorrowLimit'>
 	fullName?: string
 	dob?: string
 	gender?: string
 	address?: string
 	phone?: string
 	cardNumber?: string
-	cardIssueDate?: string
-	cardExpiryDate?: string
-	isActive?: boolean
+	cardIssueDate?: string | null
+	cardExpiryDate: string | null
+	isActive: boolean
+	createdAt: string
+	updatedAt: string
+}
+
+export type CreateReaderType = Pick<
+	ReaderType,
+	'fullName' | 'dob' | 'gender' | 'address' | 'phone' | 'cardNumber' | 'cardIssueDate' | 'cardExpiryDate'
+> & {
+	userId: string
+	readerTypeId: string
+}
+
+export type UpdateReaderType = Pick<
+	ReaderType,
+	'fullName' | 'dob' | 'gender' | 'address' | 'phone' | 'cardNumber' | 'cardIssueDate' | 'cardExpiryDate'
+> & {
+	userId: string
+	readerTypeId: string
 }
