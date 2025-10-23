@@ -9,6 +9,8 @@ import Dashboard from './pages/home/home'
 import UserInfoPage from './pages/home/user-info/page'
 import UserManagement from './pages/(managements)/users/page'
 import RootLayout from './layouts/root-layout'
+import ReaderTypesPage from './pages/reader-types/page'
+import ManageAuthors from './pages/(managements)/authors/page'
 const routes = createBrowserRouter([
 	{
 		path: '/login',
@@ -48,12 +50,20 @@ const routes = createBrowserRouter([
 				element: <Dashboard />
 			},
 			{
-				path: '/user-management',
+				path: '/users',
 				element: <UserManagement />
 			},
 			{
 				path: '/user-info',
 				element: <UserInfoPage />
+			},
+			{
+				path: '/reader-types',
+				element: <ReaderTypesPage />
+			},
+			{
+				path: '/authors',
+				element: <ManageAuthors />
 			}
 		]
 	}

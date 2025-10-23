@@ -8,3 +8,8 @@ export type ReaderTypes = {
 	createdAt: string
 	updatedAt: string
 }
+
+export type UpdateReaderTypesById = Pick<
+	ReaderTypes,
+	'typeName' | 'maxBorrowLimit' | 'borrowDurationDays' | 'description'
+>

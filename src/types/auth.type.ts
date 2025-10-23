@@ -1,4 +1,3 @@
-import { confirm } from './../lib/validate'
 import type { UserType } from './user.type'
 
 export interface LoginResponse {

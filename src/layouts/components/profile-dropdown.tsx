@@ -24,7 +24,7 @@ export function ProfileDropdown() {
 	return (
 		<>
 			<DropdownMenu modal={false}>
-				<DropdownMenuTrigger asChild>
+				<DropdownMenuTrigger>
 					<Button variant='ghost' className='relative bg-transparent hover:bg-transparent'>
 						<div className='flex flex-col items-end space-y-1'>
 							<p className='text-xs leading-none font-medium'>{user?.username}</p>
@@ -40,12 +40,7 @@ export function ProfileDropdown() {
 						</Avatar>
 					</Button>
 				</DropdownMenuTrigger>
-				<DropdownMenuContent
-					style={{
-						position: 'fixed'
-					}}
-					align='end'
-				>
+				<DropdownMenuContent className='w-56' align='end' forceMount>
 					<DropdownMenuLabel className='font-normal'>
 						<div className='flex flex-col space-y-1'>
 							<p className='text-sm leading-none font-medium'>{user?.username}</p>

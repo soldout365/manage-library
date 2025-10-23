@@ -44,5 +44,8 @@ export const userApi = {
 	updateUser: async (userId: string, data: UpdateUserType): Promise<UserType> => {
 		const response = await axiosInstance.patch(`/api/users/${userId}`, data)
 		return response.data
+	},
+	deleteUser: async (id: string): Promise<void> => {
+		await axiosInstance.delete(`/api/users/${id}`)
 	}
 }

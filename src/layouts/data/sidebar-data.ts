@@ -17,13 +17,13 @@ import type { SidebarData } from '@/types/layout.type'
 
 export const sidebarData: SidebarData = {
 	user: {
-		name: 'Đặng Tiến abc',
-		email: 'dangtienhung.dev@gmail.com',
+		name: '123',
+		email: '123',
 		avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTh1I_ZbgRygJ-yy2fIIlScWrxTZkGuZXThhA&s'
 	},
 	teams: [
 		{
-			name: 'Trường THPT jgjjg',
+			name: 'Manage Library',
 			logo: Command,
 			plan: 'Vite + ShadcnUI'
 		}
@@ -39,7 +39,7 @@ export const sidebarData: SidebarData = {
 				},
 				{
 					title: 'Quản lý người dùng',
-					url: '/user-management',
+					url: '/users',
 					icon: User
 				},
 				{

@@ -2,29 +2,29 @@ import type { CreateReaderType, GetReadersParamsType, ReaderType, UpdateReaderTy
 
 import type { AxiosResponse } from 'axios'
 import type { PaginationType } from '@/types/common.type'
-import instance from '@/configs/instance'
+import axiosInstance from '@/configs/instance'
 
 export const readerApi = {
 	// tạo hồ sơ độc giả mới
 	createReader: async (data: CreateReaderType): Promise<AxiosResponse<ReaderType>> => {
-		return await instance.post('/api/readers', data)
+		return await axiosInstance.post('/api/readers', data)
 	},
 
 	// lấy thông tin độc giả
 	getReaderByUserId: async (userId: string): Promise<ReaderType> => {
-		const response = await instance.get(`/api/readers/user/${userId}`)
+		const response = await axiosInstance.get(`/api/readers/user/${userId}`)
 		return response.data
 	},
 
 	// cập nhật thông tin độc giả
 	updateReader: async (readerId: string, data: UpdateReaderType): Promise<ReaderType> => {
-		const response = await instance.patch(`/api/readers/${readerId}`, data)
+		const response = await axiosInstance.patch(`/api/readers/${readerId}`, data)
 		return response.data
 	},
 
 	// get readers
 	getReaders: async (parmas?: GetReadersParamsType): Promise<PaginationType<ReaderType>> => {
-		const response = await instance.get('/api/readers', { params: parmas })
+		const response = await axiosInstance.get('/api/readers', { params: parmas })
 		return response.data
 	}
 }

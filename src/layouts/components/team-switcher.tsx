@@ -2,6 +2,7 @@ import * as React from 'react'
 
 import { Link } from 'react-router-dom'
 import { useSidebar } from '@/components/ui/sidebar'
+import { useAuthStore } from '@/stores/auth.store'
 
 export function TeamSwitcher({
 	teams
@@ -14,6 +15,7 @@ export function TeamSwitcher({
 }) {
 	const { isMobile } = useSidebar()
 	const [activeTeam, setActiveTeam] = React.useState(teams[0])
+	const user = useAuthStore((state) => state.user)
 
 	return (
 		<Link to='/'>
@@ -28,7 +30,9 @@ export function TeamSwitcher({
 				</div>
 				<div className='grid flex-1 text-left text-sm leading-tight'>
 					<span className='truncate font-semibold'>{activeTeam.name}</span>
-					<span className='truncate text-xs'>Dang Tien Hung - Admin</span>
+					<span className='truncate text-xs'>
+						{user?.username} - {user?.role}
+					</span>
 				</div>
 			</button>
 		</Link>
