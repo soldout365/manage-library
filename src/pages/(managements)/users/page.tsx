@@ -16,12 +16,12 @@ import { useState } from 'react'
 import CreateForm from './components/create-form'
 import AdminTable from './components/table/admin-table'
 import ReaderTable from './components/table/reader-table'
-import { useSearch } from './hooks/useSearch'
+import { useSearch } from '../../../hooks/useSearch'
 
 const UserManagement = () => {
 	const [isCreateSheetOpen, setIsCreateSheetOpen] = useState<boolean>(false)
 	const params = useQueryParams()
-	const { type = 'reader', search } = params
+	const { type = 'reader' } = params
 
 	const navigate = useNavigate()
 
@@ -119,7 +119,7 @@ const UserManagement = () => {
 									Thêm người dùng
 								</Button>
 							</SheetTrigger>
-							<CreateForm onClose={handleOpenCreateSheet} />
+							<CreateForm onClose={handleOpenCreateSheet} mode='create' />
 						</Sheet>
 					</>
 				}
@@ -146,55 +146,55 @@ const UserManagement = () => {
 			{type === 'reader' && (
 				<ReaderTable
 					readers={readers || []}
-					renderActions={() => {
-						return (
-							<div className='flex justify-end space-x-1'>
-								<Button
-									variant='ghost'
-									size='sm'
-									className='h-8 w-8 p-0 text-primary hover:text-primary'
-								>
-									<Edit className='h-4 w-4' />
-									<span className='sr-only'>Chỉnh sửa người dùng</span>
-								</Button>
-								<Button
-									variant='ghost'
-									size='sm'
-									className='h-8 w-8 p-0 text-destructive hover:text-destructive'
-								>
-									<Trash className='h-4 w-4' />
-									<span className='sr-only'>Xóa người dùng</span>
-								</Button>
-							</div>
-						)
-					}}
+					// renderActions={() => {
+					// 	return (
+					// 		<div className='flex justify-end space-x-1'>
+					// 			<Button
+					// 				variant='ghost'
+					// 				size='sm'
+					// 				className='h-8 w-8 p-0 text-primary hover:text-primary'
+					// 			>
+					// 				<Edit className='h-4 w-4' />
+					// 				<span className='sr-only'>Chỉnh sửa người dùng</span>
+					// 			</Button>
+					// 			<Button
+					// 				variant='ghost'
+					// 				size='sm'
+					// 				className='h-8 w-8 p-0 text-destructive hover:text-destructive'
+					// 			>
+					// 				<Trash className='h-4 w-4' />
+					// 				<span className='sr-only'>Xóa người dùng</span>
+					// 			</Button>
+					// 		</div>
+					// 	)
+					// }}
 				/>
 			)}
 			{type === 'admin' && (
 				<AdminTable
 					users={users || []}
-					renderActions={() => {
-						return (
-							<div className='flex justify-end space-x-1'>
-								<Button
-									variant='ghost'
-									size='sm'
-									className='h-8 w-8 p-0 text-primary hover:text-primary'
-								>
-									<Edit className='h-4 w-4' />
-									<span className='sr-only'>Chỉnh sửa người dùng</span>
-								</Button>
-								<Button
-									variant='ghost'
-									size='sm'
-									className='h-8 w-8 p-0 text-destructive hover:text-destructive'
-								>
-									<Trash className='h-4 w-4' />
-									<span className='sr-only'>Xóa người dùng</span>
-								</Button>
-							</div>
-						)
-					}}
+					// renderActions={() => {
+					// 	return (
+					// 		<div className='flex justify-end space-x-1'>
+					// 			<Button
+					// 				variant='ghost'
+					// 				size='sm'
+					// 				className='h-8 w-8 p-0 text-primary hover:text-primary'
+					// 			>
+					// 				<Edit className='h-4 w-4' />
+					// 				<span className='sr-only'>Chỉnh sửa người dùng</span>
+					// 			</Button>
+					// 			<Button
+					// 				variant='ghost'
+					// 				size='sm'
+					// 				className='h-8 w-8 p-0 text-destructive hover:text-destructive'
+					// 			>
+					// 				<Trash className='h-4 w-4' />
+					// 				<span className='sr-only'>Xóa người dùng</span>
+					// 			</Button>
+					// 		</div>
+					// 	)
+					// }}
 				/>
 			)}
 

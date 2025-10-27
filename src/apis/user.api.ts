@@ -45,7 +45,7 @@ export const userApi = {
 		const response = await axiosInstance.patch(`/api/users/${userId}`, data)
 		return response.data
 	},
-	deleteUser: async (id: string): Promise<void> => {
-		await axiosInstance.delete(`/api/users/${id}`)
+	deleteUser: async (userId: string): Promise<void> => {
+		await axiosInstance.delete(`/api/users/${userId}`)
 	}
 }

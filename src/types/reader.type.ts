@@ -37,8 +37,7 @@ export type CreateReaderType = Pick<
 
 export type UpdateReaderType = Pick<
 	ReaderType,
-	'fullName' | 'dob' | 'gender' | 'address' | 'phone' | 'cardNumber' | 'cardIssueDate' | 'cardExpiryDate'
+	'fullName' | 'dob' | 'gender' | 'address' | 'phone' | 'cardNumber' | 'cardIssueDate' | 'cardExpiryDate' | 'isActive'
 > & {
-	userId: string
-	readerTypeId: string
+	readerTypeId?: string
 }

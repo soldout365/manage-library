@@ -83,7 +83,7 @@ export const sidebarData: SidebarData = {
 			title: 'Quản lý sách',
 			items: [
 				{
-					title: 'Thông tin sách',
+					title: 'Quản lí sách',
 					icon: BookOpen,
 					url: '/books'
 				}

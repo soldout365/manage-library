@@ -40,4 +40,11 @@ export type CreateReaderForUserType = Pick<
 	readerTypeName: string
 }
 
-export type UpdateUserType = Pick<UserType, 'username' | 'email' | 'role' | 'accountStatus' | 'userCode'>
+export type UpdateUserType = {
+	userCode: string
+	username: string
+	email: string
+	role: ERole
+	accountStatus: EAccountStatus
+	password?: string
+}

@@ -16,15 +16,18 @@ export const readerApi = {
 		return response.data
 	},
 
+	// get readers
+	getReaders: async (parmas?: GetReadersParamsType): Promise<PaginationType<ReaderType>> => {
+		const response = await axiosInstance.get('/api/readers', { params: parmas })
+		return response.data
+	},
 	// cập nhật thông tin độc giả
 	updateReader: async (readerId: string, data: UpdateReaderType): Promise<ReaderType> => {
 		const response = await axiosInstance.patch(`/api/readers/${readerId}`, data)
 		return response.data
 	},
 
-	// get readers
-	getReaders: async (parmas?: GetReadersParamsType): Promise<PaginationType<ReaderType>> => {
-		const response = await axiosInstance.get('/api/readers', { params: parmas })
-		return response.data
+	deleteReaderByReaderId: async (readerId: string): Promise<void> => {
+		await axiosInstance.delete(`/api/readers/${readerId}`)
 	}
 }

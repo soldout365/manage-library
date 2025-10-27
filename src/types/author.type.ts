@@ -20,3 +20,5 @@ export type SearchAuthorsParamsType = Partial<GetAuthorsParamsType>
 export type CreateAuthorPayload = Pick<AuthorType, 'author_name' | 'bio' | 'nationality'>
 
 export type UpdateAuthorPayload = Partial<CreateAuthorPayload>
+
+export type AuthorBookRefType = Pick<AuthorType, 'id' | 'author_name' | 'slug' | 'bio' | 'nationality'>

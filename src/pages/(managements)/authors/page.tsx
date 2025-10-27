@@ -69,7 +69,7 @@ export default function ManageAuthors() {
 			} else {
 				setIsSearchMode(false)
 			}
-		}, 500)
+		}, 2000)
 
 		return () => clearTimeout(timer)
 	}, [searchQuery])
@@ -252,177 +252,26 @@ export default function ManageAuthors() {
 	}
 
 	return (
-		<div className='min-h-screen bg-gray-50 p-6'>
-			<div className='max-w-7xl mx-auto'>
-				{/* Header */}
-				<div className='mb-6 flex items-center justify-between'>
-					<h1 className='text-2xl font-bold text-gray-800'>Quản lý tác giả</h1>
-					<Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-						<DialogTrigger asChild>
-							<Button className='bg-green-600 hover:bg-green-700'>
-								<Plus className='h-4 w-4 mr-2' />
-								Thêm tác giả
-							</Button>
-						</DialogTrigger>
-						<DialogContent className='max-w-2xl'>
-							<DialogHeader>
-								<DialogTitle>Thêm tác giả mới</DialogTitle>
-								<DialogDescription>Nhập thông tin tác giả mới vào form bên dưới</DialogDescription>
-							</DialogHeader>
-							<Form {...createForm}>
-								<form onSubmit={createForm.handleSubmit(handleCreate)} className='space-y-4'>
-									<FormField
-										control={createForm.control}
-										name='author_name'
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Tên tác giả</FormLabel>
-												<FormControl>
-													<Input placeholder='Nhập tên tác giả' {...field} />
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-									<FormField
-										control={createForm.control}
-										name='nationality'
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Quốc tịch</FormLabel>
-												<FormControl>
-													<Input placeholder='Nhập quốc tịch' {...field} />
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-									<FormField
-										control={createForm.control}
-										name='bio'
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Tiểu sử</FormLabel>
-												<FormControl>
-													<Textarea
-														placeholder='Nhập tiểu sử tác giả'
-														className='min-h-[120px]'
-														{...field}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-									<DialogFooter>
-										<Button
-											type='button'
-											variant='outline'
-											onClick={() => setIsCreateDialogOpen(false)}
-										>
-											Hủy
-										</Button>
-										<Button type='submit' disabled={isCreating}>
-											{isCreating ? 'Đang tạo...' : 'Tạo tác giả'}
-										</Button>
-									</DialogFooter>
-								</form>
-							</Form>
-						</DialogContent>
-					</Dialog>
-				</div>
-
-				{/* Search Bar */}
-				<div className='mb-6 bg-white rounded-lg shadow p-4'>
-					<div className='relative'>
-						<Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
-						<Input
-							type='text'
-							placeholder='Tìm kiếm tác giả theo tên...'
-							value={searchQuery}
-							onChange={(e) => setSearchQuery(e.target.value)}
-							className='pl-10 pr-10'
-						/>
-						{searchQuery && (
-							<button
-								onClick={handleClearSearch}
-								className='absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600'
-							>
-								<X className='h-4 w-4' />
-							</button>
-						)}
-					</div>
-				</div>
-
-				{/* Table */}
-				<div className='bg-white rounded-lg shadow'>
-					<Table>
-						<TableHeader>
-							<TableRow>
-								<TableHead>Tên tác giả</TableHead>
-								<TableHead>Quốc tịch</TableHead>
-								<TableHead>Tiểu sử</TableHead>
-								<TableHead className='text-right'>Hành động</TableHead>
-							</TableRow>
-						</TableHeader>
-						<TableBody>
-							{authors && authors.length > 0 ? (
-								authors.map((author) => (
-									<TableRow key={author.id}>
-										<TableCell className='font-medium'>{author.author_name}</TableCell>
-										<TableCell>{author.nationality}</TableCell>
-										<TableCell className='max-w-md'>
-											<div className='truncate'>{author.bio}</div>
-										</TableCell>
-										<TableCell className='text-right'>
-											<div className='flex justify-end gap-2'>
-												<Button
-													onClick={() => handleEdit(author)}
-													size='icon'
-													variant='ghost'
-													className='text-green-600 hover:bg-blue-50 hover:text-green-800'
-												>
-													<Edit className='h-4 w-4' />
-												</Button>
-												<Button
-													onClick={() => handleDeleteClick(author)}
-													size='icon'
-													variant='ghost'
-													className='text-red-600 hover:bg-red-50 hover:text-red-700'
-												>
-													<Trash2 className='h-4 w-4' />
-												</Button>
-											</div>
-										</TableCell>
-									</TableRow>
-								))
-							) : (
-								<TableRow>
-									<TableCell className='text-center py-8' colSpan={4}>
-										{isSearchMode
-											? `Không tìm thấy tác giả nào với từ khóa "${debouncedSearch}"`
-											: 'Không tìm thấy tác giả nào'}
-									</TableCell>
-								</TableRow>
-							)}
-						</TableBody>
-					</Table>
-				</div>
-
-				{/* Pagination */}
-				<PagiantionWapper currentData={currentData} onChangePage={handleChangePage} currentMeta={currentMeta} />
-
-				{/* Edit Dialog */}
-				<Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+		<div>
+			{/* Header */}
+			<div className='mb-6 flex items-center justify-between'>
+				<h1 className='text-2xl font-bold text-gray-800'>Quản lý tác giả</h1>
+				<Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+					<DialogTrigger asChild>
+						<Button className='bg-green-600 hover:bg-green-700'>
+							<Plus className='h-4 w-4 mr-2' />
+							Thêm tác giả
+						</Button>
+					</DialogTrigger>
 					<DialogContent className='max-w-2xl'>
 						<DialogHeader>
-							<DialogTitle>Chỉnh sửa tác giả</DialogTitle>
-							<DialogDescription>Cập nhật thông tin tác giả</DialogDescription>
+							<DialogTitle>Thêm tác giả mới</DialogTitle>
+							<DialogDescription>Nhập thông tin tác giả mới vào form bên dưới</DialogDescription>
 						</DialogHeader>
-						<Form {...editForm}>
-							<form onSubmit={editForm.handleSubmit(handleUpdate)} className='space-y-4'>
+						<Form {...createForm}>
+							<form onSubmit={createForm.handleSubmit(handleCreate)} className='space-y-4'>
 								<FormField
-									control={editForm.control}
+									control={createForm.control}
 									name='author_name'
 									render={({ field }) => (
 										<FormItem>
@@ -435,7 +284,7 @@ export default function ManageAuthors() {
 									)}
 								/>
 								<FormField
-									control={editForm.control}
+									control={createForm.control}
 									name='nationality'
 									render={({ field }) => (
 										<FormItem>
@@ -448,7 +297,7 @@ export default function ManageAuthors() {
 									)}
 								/>
 								<FormField
-									control={editForm.control}
+									control={createForm.control}
 									name='bio'
 									render={({ field }) => (
 										<FormItem>
@@ -465,41 +314,190 @@ export default function ManageAuthors() {
 									)}
 								/>
 								<DialogFooter>
-									<Button type='button' variant='outline' onClick={() => setIsEditDialogOpen(false)}>
+									<Button
+										type='button'
+										variant='outline'
+										onClick={() => setIsCreateDialogOpen(false)}
+									>
 										Hủy
 									</Button>
-									<Button type='submit' disabled={isUpdating}>
-										{isUpdating ? 'Đang cập nhật...' : 'Cập nhật'}
+									<Button type='submit' disabled={isCreating}>
+										{isCreating ? 'Đang tạo...' : 'Tạo tác giả'}
 									</Button>
 								</DialogFooter>
 							</form>
 						</Form>
 					</DialogContent>
 				</Dialog>
-
-				{/* Delete Confirmation Dialog */}
-				<AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-					<AlertDialogContent>
-						<AlertDialogHeader>
-							<AlertDialogTitle>Xác nhận xóa tác giả</AlertDialogTitle>
-							<AlertDialogDescription>
-								Bạn có chắc chắn muốn xóa tác giả "{selectedAuthor?.author_name}"? Hành động này không
-								thể hoàn tác.
-							</AlertDialogDescription>
-						</AlertDialogHeader>
-						<AlertDialogFooter>
-							<AlertDialogCancel>Hủy</AlertDialogCancel>
-							<AlertDialogAction
-								onClick={handleDelete}
-								disabled={isDeleting}
-								className='bg-red-600 hover:bg-red-700'
-							>
-								{isDeleting ? 'Đang xóa...' : 'Xóa'}
-							</AlertDialogAction>
-						</AlertDialogFooter>
-					</AlertDialogContent>
-				</AlertDialog>
 			</div>
+
+			{/* Search Bar */}
+			<div className='mb-6 bg-white rounded-lg shadow p-4'>
+				<div className='relative'>
+					<Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
+					<Input
+						type='text'
+						placeholder='Tìm kiếm tác giả theo tên...'
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
+						className='pl-10 pr-10'
+					/>
+					{searchQuery && (
+						<button
+							onClick={handleClearSearch}
+							className='absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600'
+						>
+							<X className='h-4 w-4' />
+						</button>
+					)}
+				</div>
+			</div>
+
+			{/* Table */}
+			<div className='bg-white rounded-lg shadow'>
+				<Table>
+					<TableHeader>
+						<TableRow>
+							<TableHead>Tên tác giả</TableHead>
+							<TableHead>Quốc tịch</TableHead>
+							<TableHead>Tiểu sử</TableHead>
+							<TableHead className='text-right'>Hành động</TableHead>
+						</TableRow>
+					</TableHeader>
+					<TableBody>
+						{authors && authors.length > 0 ? (
+							authors.map((author) => (
+								<TableRow key={author.id}>
+									<TableCell className='font-medium'>{author.author_name}</TableCell>
+									<TableCell>{author.nationality}</TableCell>
+									<TableCell className='max-w-md'>
+										<div className='truncate'>{author.bio}</div>
+									</TableCell>
+									<TableCell className='text-right'>
+										<div className='flex justify-end gap-2'>
+											<Button
+												onClick={() => handleEdit(author)}
+												size='icon'
+												variant='ghost'
+												className='text-green-600 hover:bg-blue-50 hover:text-green-800'
+											>
+												<Edit className='h-4 w-4' />
+											</Button>
+											<Button
+												onClick={() => handleDeleteClick(author)}
+												size='icon'
+												variant='ghost'
+												className='text-red-600 hover:bg-red-50 hover:text-red-700'
+											>
+												<Trash2 className='h-4 w-4' />
+											</Button>
+										</div>
+									</TableCell>
+								</TableRow>
+							))
+						) : (
+							<TableRow>
+								<TableCell className='text-center py-8' colSpan={4}>
+									{isSearchMode
+										? `Không tìm thấy tác giả nào với từ khóa "${debouncedSearch}"`
+										: 'Không tìm thấy tác giả nào'}
+								</TableCell>
+							</TableRow>
+						)}
+					</TableBody>
+				</Table>
+			</div>
+
+			{/* Pagination */}
+			<PagiantionWapper currentData={currentData} onChangePage={handleChangePage} currentMeta={currentMeta} />
+
+			{/* Edit Dialog */}
+			<Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+				<DialogContent className='max-w-2xl'>
+					<DialogHeader>
+						<DialogTitle>Chỉnh sửa tác giả</DialogTitle>
+						<DialogDescription>Cập nhật thông tin tác giả</DialogDescription>
+					</DialogHeader>
+					<Form {...editForm}>
+						<form onSubmit={editForm.handleSubmit(handleUpdate)} className='space-y-4'>
+							<FormField
+								control={editForm.control}
+								name='author_name'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Tên tác giả</FormLabel>
+										<FormControl>
+											<Input placeholder='Nhập tên tác giả' {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={editForm.control}
+								name='nationality'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Quốc tịch</FormLabel>
+										<FormControl>
+											<Input placeholder='Nhập quốc tịch' {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={editForm.control}
+								name='bio'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Tiểu sử</FormLabel>
+										<FormControl>
+											<Textarea
+												placeholder='Nhập tiểu sử tác giả'
+												className='min-h-[120px]'
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<DialogFooter>
+								<Button type='button' variant='outline' onClick={() => setIsEditDialogOpen(false)}>
+									Hủy
+								</Button>
+								<Button type='submit' disabled={isUpdating}>
+									{isUpdating ? 'Đang cập nhật...' : 'Cập nhật'}
+								</Button>
+							</DialogFooter>
+						</form>
+					</Form>
+				</DialogContent>
+			</Dialog>
+
+			{/* Delete Confirmation Dialog */}
+			<AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Xác nhận xóa tác giả</AlertDialogTitle>
+						<AlertDialogDescription>
+							Bạn có chắc chắn muốn xóa tác giả "{selectedAuthor?.author_name}"? Hành động này không thể
+							hoàn tác.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>Hủy</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={handleDelete}
+							disabled={isDeleting}
+							className='bg-red-600 hover:bg-red-700'
+						>
+							{isDeleting ? 'Đang xóa...' : 'Xóa'}
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	)
 }
