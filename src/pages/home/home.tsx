@@ -23,10 +23,7 @@ import {
 } from 'lucide-react'
 
 // Import các component đã tách
-import DashboardOverview from './overview/page'
-import BooksManagement from './manage-book/page'
-import ReadersManagement from './manage-reader/page'
-import BorrowManagement from './manage-borrow/page'
+
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -34,7 +31,6 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { toast } from 'sonner'
 import { useLogin } from '@/hooks/auth/useLogin'
 import { useNavigate } from 'react-router-dom'
 
@@ -62,63 +58,6 @@ const Dashboard = () => {
 		{ id: 3, type: 'success', message: '12 độc giả mới đăng ký', time: '1 giờ trước' }
 	])
 
-	const modules = [
-		{ id: 'dashboard', name: 'Tổng quan', icon: Home, color: 'bg-blue-500' },
-		{ id: 'books', name: 'Quản lý sách', icon: Book, color: 'bg-green-500' },
-		{ id: 'readers', name: 'Quản lý độc giả', icon: Users, color: 'bg-purple-500' },
-		{ id: 'borrow', name: 'Mượn trả sách', icon: Calendar, color: 'bg-orange-500' },
-		{ id: 'authors', name: 'Tác giả', icon: User, color: 'bg-indigo-500' },
-		{ id: 'categories', name: 'Thể loại', icon: Archive, color: 'bg-pink-500' },
-		{ id: 'publishers', name: 'NXB', icon: FileText, color: 'bg-yellow-500' },
-		{ id: 'ebooks', name: 'E-books', icon: Download, color: 'bg-cyan-500' },
-		{ id: 'reservations', name: 'Đặt trước', icon: Clock, color: 'bg-red-500' },
-		{ id: 'fines', name: 'Phạt', icon: AlertTriangle, color: 'bg-amber-500' },
-		{ id: 'locations', name: 'Vị trí kệ', icon: MapPin, color: 'bg-teal-500' },
-		{ id: 'uploads', name: 'Tải lên', icon: Upload, color: 'bg-gray-500' },
-		{ id: 'notifications', name: 'Thông báo', icon: Bell, color: 'bg-rose-500' },
-		{ id: 'settings', name: 'Cài đặt', icon: Settings, color: 'bg-slate-500' }
-	]
-
-	const renderContent = () => {
-		switch (activeModule) {
-			case 'dashboard':
-				return <DashboardOverview dashboardStats={dashboardStats} currentUser={currentUser} />
-			case 'books':
-				return <BooksManagement />
-			case 'readers':
-				return <ReadersManagement />
-			case 'borrow':
-				return <BorrowManagement />
-			default:
-				return (
-					<div className='space-y-6'>
-						<h1 className='text-3xl font-bold text-gray-900 capitalize'>
-							{modules.find((m) => m.id === activeModule)?.name || 'Module'}
-						</h1>
-						<div className='bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center'>
-							<div className='max-w-md mx-auto'>
-								<div className='mb-4'>
-									{React.createElement(modules.find((m) => m.id === activeModule)?.icon || Settings, {
-										size: 64,
-										className: 'mx-auto text-gray-400'
-									})}
-								</div>
-								<h3 className='text-xl font-semibold text-gray-900 mb-2'>
-									{modules.find((m) => m.id === activeModule)?.name}
-								</h3>
-								<p className='text-gray-600 mb-6'>
-									Giao diện cho module này đang được phát triển với đầy đủ các tính năng từ API.
-								</p>
-								<button className='bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors'>
-									Xem chi tiết
-								</button>
-							</div>
-						</div>
-					</div>
-				)
-		}
-	}
-
 	return (
 		<div className='min-h-screen bg-gray-50 flex'>
 			{/* Sidebar */}
@@ -139,29 +78,6 @@ const Dashboard = () => {
 						)}
 					</div>
 				</div>
-				{/* Navigation */}
-				<nav className='flex-1 p-4 space-y-2'>
-					{modules.map((module) => {
-						const Icon = module.icon
-						const isActive = activeModule === module.id
-						return (
-							<button
-								key={module.id}
-								onClick={() => setActiveModule(module.id)}
-								className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
-									isActive
-										? 'bg-blue-50 text-blue-700 border border-blue-200'
-										: 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-								}`}
-							>
-								<div className={`p-1 rounded ${isActive ? 'bg-blue-100' : ''}`}>
-									<Icon size={18} />
-								</div>
-								{sidebarOpen && <span className='font-medium text-sm'>{module.name}</span>}
-							</button>
-						)
-					})}
-				</nav>
 			</div>
 			{/* Main Content */}
 			<div className='flex-1 flex flex-col min-w-0'>
@@ -226,8 +142,6 @@ const Dashboard = () => {
 						</div>
 					</div>
 				</header>
-				{/* Page Content */}
-				<main className='flex-1 p-6 overflow-auto'>{renderContent()}</main>
 			</div>
 			{/* Notifications Panel (if expanded) */}
 			{notifications.length > 0 && (

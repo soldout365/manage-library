@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { User, Edit2, Save, X, Mail, Calendar, Users, BookOpen } from 'lucide-react'
+import { User, Edit2, Save, X, Calendar, Users, BookOpen } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 export default function UserInfoPage() {
