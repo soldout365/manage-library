@@ -61,5 +61,5 @@ export type BookCreateType = {
 	category_id: string
 	main_category_id: string
 	author_ids: string[]
-	grade_level_ids: string[]
+	grade_level_ids?: string[]
 }

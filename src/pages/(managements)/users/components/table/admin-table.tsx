@@ -19,7 +19,7 @@ import { toast } from 'sonner'
 import { useQueryClient } from '@tanstack/react-query'
 import { userApi } from '@/apis/user.api'
 import { Sheet } from '@/components/ui/sheet'
-import CreateForm from '../create-form'
+import CreateForm from '../one-for-all-form'
 
 interface AdminTableProps {
 	users: UserType[]

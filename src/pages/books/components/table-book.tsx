@@ -38,7 +38,11 @@ const TableBook = ({ books, renderActions }: TableBookProps) => {
 					books.map((book) => (
 						<TableRow key={book.id}>
 							<TableCell>
-								<BookCover src={book.cover_image as string | undefined} alt={book.title} size='md' />
+								<BookCover
+									src={book.cover_image as string | undefined}
+									alt={book.title}
+									className='w-30 h-40 object-cover rounded-lg'
+								/>
 							</TableCell>
 							<TableCell className='font-medium'>
 								<div className='flex flex-col'>

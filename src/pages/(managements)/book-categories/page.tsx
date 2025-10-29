@@ -1,8 +1,7 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Edit, Trash2, Plus, Search, X } from 'lucide-react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import {
 	Dialog,
 	DialogContent,
@@ -22,15 +21,14 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle
 } from '@/components/ui/alert-dialog'
-import { Textarea } from '@/components/ui/textarea'
-import { useGetAuthors } from '@/hooks/authors/useGetAuthors'
-import { useSearchAuthors } from '@/hooks/authors/useSearchAuthor'
-import { useCreateAthor } from '@/hooks/authors/useCreateAuthor'
-import { useUpdateAuthorById } from '@/hooks/authors/useUpdateAuthorById'
-import { useDeleteAuthorById } from '@/hooks/authors/useDeleteAuthorById'
+import { useBookCategories } from '@/hooks/book-categories/useGetBookCategories'
+import { useCreateBookCategory } from '@/hooks/book-categories/useCreateLocation'
+import { useUpdateBookCategory } from '@/hooks/book-categories/useUpdateLocation'
+import { useDeleteBookCategory } from '@/hooks/book-categories/useDeleteLocation'
 import { useQueryClient } from '@tanstack/react-query'
-import { authorApi } from '@/apis/author.api'
-import type { AuthorType, CreateAuthorPayload, GetAuthorsParamsType, UpdateAuthorPayload } from '@/types/author.type'
+import { bookCategoryApi } from '@/apis/book-category.api'
+import type { BookCategoryType, BookCategoryCreateType, BookCategoryUpdateType } from '@/types/book-category.type'
+import type { QueryParamsType } from '@/types/common.type'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -39,202 +37,184 @@ import { toast } from 'sonner'
 import { useQueryParams } from '@/hooks/useQueryParam'
 import PagiantionWapper from '@/components/pagination-wrapper'
 import { createSearchParams, useNavigate } from 'react-router-dom'
-import { useDebounce } from '@/hooks/useDebounce'
+import { Input } from '@/components/ui/input'
+import { Card, CardContent } from '@/components/ui/card'
 
-const authorSchema = z.object({
-	author_name: z.string().min(1, 'Tên tác giả không được để trống'),
-	nationality: z.string().min(1, 'Quốc tịch không được để trống'),
-	bio: z.string().min(1, 'Tiểu sử không được để trống')
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useDebounce } from '@/hooks/useDebounce'
+import { useSearchBookCategory } from '@/hooks/book-categories/useSearchBookCategory'
+
+const categorySchema = z.object({
+	name: z.string().min(1, 'Tên thể loại không được để trống'),
+	parent_id: z.string().optional().nullable()
 })
 
-type AuthorFormValues = z.infer<typeof authorSchema>
+type CategoryFormValues = z.infer<typeof categorySchema>
 
-export default function ManageAuthors() {
+export default function ManageBookCategoriesPage() {
 	const navigate = useNavigate()
 	const queryClient = useQueryClient()
 	const params = useQueryParams()
 
-	// State cho search - đơn giản hóa
+	// State cho search
 	const [searchQuery, setSearchQuery] = useState('')
-	const debouncedSearch = useDebounce(searchQuery, 3000) //3s la call
-
 	const [immediateSearch, setImmediateSearch] = useState('')
 
+	const debouncedSearch = useDebounce(searchQuery, 3600)
 	// Sử dụng immediateSearch nếu có (khi bấm Enter), nếu không thì dùng debouncedSearch
 	const activeSearch = immediateSearch || debouncedSearch
 
 	// Tính toán isSearchMode từ activeSearch
 	const isSearchMode = useMemo(() => activeSearch.trim().length > 0, [activeSearch])
-
 	// Lấy page từ URL params hoặc mặc định là 1
 	const currentPage = useMemo(() => {
 		return parseInt(params.page as string) || 1
 	}, [params.page])
 
-	// Get authors bình thường (khi không search) - enabled khi không search
 	const {
-		data: authorsData,
-		isLoading: isLoadingAuthors,
-		isError: isErrorAuthors
-	} = useGetAuthors(
-		params as GetAuthorsParamsType,
-		!isSearchMode // Chỉ enabled khi không search
-	)
+		data: bookCategoriesData,
+		isLoading: isLoadingBookCategories,
+		isError: isErrorBookCategories
+	} = useBookCategories(params as QueryParamsType, !isSearchMode)
 
-	// Search authors (khi có search query) - enabled khi có search
+	// Search locations (khi có search query)
 	const {
 		data: searchData,
 		isLoading: isLoadingSearch,
 		isError: isErrorSearch
-	} = useSearchAuthors(
+	} = useSearchBookCategory(
 		{
 			q: debouncedSearch,
 			page: currentPage,
-			limit: 10
+			limit: 5
 		},
 		isSearchMode // Chỉ enabled khi đang search
 	)
 
-	// Tính toán data hiển thị
-	const displayData = isSearchMode ? searchData : authorsData
-	const authors = displayData?.data
-	const currentMeta = displayData?.meta
-	const currentData = authors?.length
-	const isLoading = isSearchMode ? isLoadingSearch : isLoadingAuthors
-	const isError = isSearchMode ? isErrorSearch : isErrorAuthors
+	const displayData = isSearchMode ? searchData : bookCategoriesData
+	const categories = displayData?.data
+	const currentMeta = bookCategoriesData?.meta
+	const currentData = categories?.length
 
-	// Mutations
-	const { mutate: createAuthor, isPending: isCreating } = useCreateAthor()
-	const { mutate: updateAuthor, isPending: isUpdating } = useUpdateAuthorById()
-	const { mutate: deleteAuthor, isPending: isDeleting } = useDeleteAuthorById()
+	const isLoading = isSearchMode ? isLoadingSearch : isLoadingBookCategories
+	const isError = isSearchMode ? isErrorSearch : isErrorBookCategories
 
-	// Dialog states
+	const { mutate: createCategory, isPending: isCreating } = useCreateBookCategory()
+	const { mutate: updateCategory, isPending: isUpdating } = useUpdateBookCategory()
+	const { mutate: deleteCategory, isPending: isDeleting } = useDeleteBookCategory()
+
 	const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
 	const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-	const [selectedAuthor, setSelectedAuthor] = useState<AuthorType | null>(null)
+	const [selectedCategory, setSelectedCategory] = useState<BookCategoryType | null>(null)
 
-	const createForm = useForm<AuthorFormValues>({
-		resolver: zodResolver(authorSchema),
+	const createForm = useForm<CategoryFormValues>({
+		resolver: zodResolver(categorySchema),
 		defaultValues: {
-			author_name: '',
-			nationality: '',
-			bio: ''
+			name: '',
+			parent_id: null
 		}
 	})
 
-	const editForm = useForm<AuthorFormValues>({
-		resolver: zodResolver(authorSchema),
+	const editForm = useForm<CategoryFormValues>({
+		resolver: zodResolver(categorySchema),
 		defaultValues: {
-			author_name: '',
-			nationality: '',
-			bio: ''
+			name: '',
+			parent_id: null
 		}
 	})
 
-	// Hàm invalidate queries thông minh - chỉ invalidate query đang active
-	const invalidateAuthorQueries = () => {
-		if (isSearchMode) {
-			queryClient.invalidateQueries({ queryKey: ['searchAuthors'] })
-		} else {
-			queryClient.invalidateQueries({ queryKey: [authorApi.getAuthors.name] })
-		}
-	}
-
-	const handleCreate = (data: AuthorFormValues) => {
-		const payload: CreateAuthorPayload = {
-			author_name: data.author_name,
-			nationality: data.nationality,
-			bio: data.bio
+	const handleCreate = (data: CategoryFormValues) => {
+		const payload: BookCategoryCreateType = {
+			name: data.name,
+			parent_id: data.parent_id || null
 		}
 
-		createAuthor(payload, {
+		createCategory(payload, {
 			onSuccess: () => {
-				toast.success('Tác giả được tạo thành công')
-				invalidateAuthorQueries()
+				toast.success('Thể loại được tạo thành công')
+				queryClient.invalidateQueries({ queryKey: [bookCategoryApi.getBookCategories.name] })
 				setIsCreateDialogOpen(false)
 				createForm.reset()
 			},
 			onError: () => {
-				toast.error('Có lỗi xảy ra khi tạo tác giả')
+				toast.error('Có lỗi xảy ra khi tạo thể loại')
 			}
 		})
 	}
 
-	const handleEdit = (author: AuthorType) => {
-		setSelectedAuthor(author)
+	const handleEdit = (category: BookCategoryType) => {
+		setSelectedCategory(category)
 		editForm.reset({
-			author_name: author.author_name,
-			nationality: author.nationality,
-			bio: author.bio
+			name: category.name,
+			parent_id: category.parent_id
 		})
 		setIsEditDialogOpen(true)
 	}
 
-	const handleUpdate = (data: AuthorFormValues) => {
-		if (!selectedAuthor) return
+	const handleUpdate = (data: CategoryFormValues) => {
+		if (!selectedCategory) return
 
-		const payload: UpdateAuthorPayload = {
-			author_name: data.author_name,
-			nationality: data.nationality,
-			bio: data.bio
+		const payload: BookCategoryUpdateType = {
+			name: data.name,
+			parent_id: data.parent_id || null
 		}
 
-		updateAuthor(
-			{ id: selectedAuthor.id, payload },
+		updateCategory(
+			{ id: selectedCategory.id, data: payload },
 			{
 				onSuccess: () => {
-					toast.success('Cập nhật tác giả thành công')
-					invalidateAuthorQueries()
+					toast.success('Cập nhật thể loại thành công')
+					queryClient.invalidateQueries({ queryKey: [bookCategoryApi.getBookCategories.name] })
 					setIsEditDialogOpen(false)
-					setSelectedAuthor(null)
+					setSelectedCategory(null)
 					editForm.reset()
 				},
 				onError: () => {
-					toast.error('Có lỗi xảy ra khi cập nhật tác giả')
+					toast.error('Có lỗi xảy ra khi cập nhật thể loại')
 				}
 			}
 		)
 	}
 
-	const handleDeleteClick = (author: AuthorType) => {
-		setSelectedAuthor(author)
+	const handleDeleteClick = (category: BookCategoryType) => {
+		setSelectedCategory(category)
 		setIsDeleteDialogOpen(true)
 	}
 
 	const handleDelete = () => {
-		if (!selectedAuthor) return
+		if (!selectedCategory) return
 
-		deleteAuthor(selectedAuthor.id, {
+		deleteCategory(selectedCategory.id, {
 			onSuccess: () => {
-				toast.success('Xóa tác giả thành công')
-				invalidateAuthorQueries()
+				toast.success('Xóa thể loại thành công')
+				queryClient.invalidateQueries({ queryKey: [bookCategoryApi.getBookCategories.name] })
 				setIsDeleteDialogOpen(false)
-				setSelectedAuthor(null)
+				setSelectedCategory(null)
 			},
 			onError: () => {
-				toast.error('Có lỗi xảy ra khi xóa tác giả')
+				toast.error('Có lỗi xảy ra khi xóa thể loại')
 			}
 		})
 	}
 
 	const handleChangePage = (newPage: number) => {
 		navigate({
-			pathname: '/authors',
+			pathname: '/book-categories',
 			search: createSearchParams({
 				...params,
+				limit: '5',
 				page: newPage.toString()
 			}).toString()
 		})
 	}
-
 	// Hàm clear search được tối ưu
 	const handleClearSearch = () => {
 		setSearchQuery('')
 		// Reset về trang 1 khi clear search
 		if (currentPage !== 1) {
 			navigate({
-				pathname: '/authors',
+				pathname: '/locations',
 				search: createSearchParams({
 					...params,
 					page: '1'
@@ -247,6 +227,16 @@ export default function ManageAuthors() {
 	const handleSearchEnter = () => {
 		setImmediateSearch(searchQuery)
 	}
+
+	const getParentCategoryName = (parentId: string | null) => {
+		if (!parentId) return 'Không có'
+		const parent = categories?.find((cat) => cat.id === parentId)
+		return parent?.name || 'Không xác định'
+	}
+
+	const rootCategories = categories?.filter((cat) => !cat.parent_id) || []
+	const childCategories = categories?.filter((cat) => cat.parent_id) || []
+
 	if (isLoading) {
 		return (
 			<div className='min-h-screen bg-gray-50 p-6'>
@@ -271,29 +261,29 @@ export default function ManageAuthors() {
 		<div>
 			{/* Header */}
 			<div className='mb-6 flex items-center justify-between'>
-				<h1 className='text-2xl font-bold text-gray-800'>Quản lý tác giả</h1>
+				<h1 className='text-2xl font-bold text-gray-800'>Quản lý thể loại sách</h1>
 				<Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
 					<DialogTrigger asChild>
 						<Button className='bg-green-600 hover:bg-green-700'>
 							<Plus className='h-4 w-4 mr-2' />
-							Thêm tác giả
+							Thêm thể loại
 						</Button>
 					</DialogTrigger>
-					<DialogContent className='max-w-2xl'>
+					<DialogContent className='max-w-2xl max-h-[90vh] overflow-y-auto'>
 						<DialogHeader>
-							<DialogTitle>Thêm tác giả mới</DialogTitle>
-							<DialogDescription>Nhập thông tin tác giả mới vào form bên dưới</DialogDescription>
+							<DialogTitle>Thêm thể loại mới</DialogTitle>
+							<DialogDescription>Nhập thông tin thể loại mới vào form bên dưới</DialogDescription>
 						</DialogHeader>
 						<Form {...createForm}>
 							<form onSubmit={createForm.handleSubmit(handleCreate)} className='space-y-4'>
 								<FormField
 									control={createForm.control}
-									name='author_name'
+									name='name'
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel>Tên tác giả</FormLabel>
+											<FormLabel>Tên thể loại</FormLabel>
 											<FormControl>
-												<Input placeholder='Nhập tên tác giả' {...field} />
+												<Input placeholder='Nhập tên thể loại' {...field} />
 											</FormControl>
 											<FormMessage />
 										</FormItem>
@@ -301,30 +291,30 @@ export default function ManageAuthors() {
 								/>
 								<FormField
 									control={createForm.control}
-									name='nationality'
+									name='parent_id'
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel>Quốc tịch</FormLabel>
-											<FormControl>
-												<Input placeholder='Nhập quốc tịch' {...field} />
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={createForm.control}
-									name='bio'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Tiểu sử</FormLabel>
-											<FormControl>
-												<Textarea
-													placeholder='Nhập tiểu sử tác giả'
-													className='min-h-[120px]'
-													{...field}
-												/>
-											</FormControl>
+											<FormLabel>Thể loại cha (tùy chọn)</FormLabel>
+											<Select
+												onValueChange={(value) =>
+													field.onChange(value === 'none' ? null : value)
+												}
+												value={field.value || 'none'}
+											>
+												<FormControl>
+													<SelectTrigger>
+														<SelectValue placeholder='Chọn thể loại cha' />
+													</SelectTrigger>
+												</FormControl>
+												<SelectContent>
+													<SelectItem value='none'>Không có</SelectItem>
+													{categories?.map((cat) => (
+														<SelectItem key={cat.id} value={cat.id}>
+															{cat.name}
+														</SelectItem>
+													))}
+												</SelectContent>
+											</Select>
 											<FormMessage />
 										</FormItem>
 									)}
@@ -338,7 +328,7 @@ export default function ManageAuthors() {
 										Hủy
 									</Button>
 									<Button type='submit' disabled={isCreating}>
-										{isCreating ? 'Đang tạo...' : 'Tạo tác giả'}
+										{isCreating ? 'Đang tạo...' : 'Tạo thể loại'}
 									</Button>
 								</DialogFooter>
 							</form>
@@ -396,30 +386,56 @@ export default function ManageAuthors() {
 				)}
 			</div>
 
+			{/* Stats Section */}
+			<div className='mb-6 grid grid-cols-1 md:grid-cols-3 gap-4'>
+				<div className='bg-white rounded-lg shadow p-4 flex flex-col items-center justify-center'>
+					<h3 className='text-sm font-medium text-gray-500 mb-1'>Tổng số thể loại</h3>
+					<p className='text-2xl font-bold text-gray-800'>{categories?.length || 0}</p>
+				</div>
+				<div className='bg-white rounded-lg shadow p-4 flex flex-col items-center justify-center'>
+					<h3 className='text-sm font-medium text-gray-500 mb-1'>Thể loại gốc</h3>
+					<p className='text-2xl font-bold text-green-600'>{rootCategories.length}</p>
+				</div>
+				<div className='bg-white rounded-lg shadow p-4 flex flex-col items-center justify-center'>
+					<h3 className='text-sm font-medium text-gray-500 mb-1'>Thể loại con</h3>
+					<p className='text-2xl font-bold text-blue-600'>{childCategories.length}</p>
+				</div>
+			</div>
+
 			{/* Table */}
-			<div className='bg-white rounded-lg shadow'>
+			<div className='bg-white rounded-lg shadow overflow-x-auto'>
 				<Table>
 					<TableHeader>
 						<TableRow>
-							<TableHead>Tên tác giả</TableHead>
-							<TableHead>Quốc tịch</TableHead>
-							<TableHead>Tiểu sử</TableHead>
+							<TableHead>Tên thể loại</TableHead>
+							<TableHead>Thể loại cha</TableHead>
+							<TableHead>Ngày tạo</TableHead>
+							<TableHead>Ngày cập nhật</TableHead>
 							<TableHead className='text-right'>Hành động</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{authors && authors.length > 0 ? (
-							authors.map((author) => (
-								<TableRow key={author.id}>
-									<TableCell className='font-medium'>{author.author_name}</TableCell>
-									<TableCell>{author.nationality}</TableCell>
-									<TableCell className='max-w-md'>
-										<div className='truncate'>{author.bio}</div>
+						{categories && categories.length > 0 ? (
+							categories.map((category) => (
+								<TableRow key={category.id}>
+									<TableCell className='font-medium'>{category.name}</TableCell>
+									<TableCell>
+										<span
+											className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+												category.parent_id
+													? 'bg-blue-100 text-blue-800'
+													: 'bg-gray-100 text-gray-800'
+											}`}
+										>
+											{getParentCategoryName(category.parent_id)}
+										</span>
 									</TableCell>
+									<TableCell>{new Date(category.createdAt).toLocaleDateString('vi-VN')}</TableCell>
+									<TableCell>{new Date(category.updatedAt).toLocaleDateString('vi-VN')}</TableCell>
 									<TableCell className='text-right'>
 										<div className='flex justify-end gap-2'>
 											<Button
-												onClick={() => handleEdit(author)}
+												onClick={() => handleEdit(category)}
 												size='icon'
 												variant='ghost'
 												className='text-green-600 hover:bg-blue-50 hover:text-green-800'
@@ -427,7 +443,7 @@ export default function ManageAuthors() {
 												<Edit className='h-4 w-4' />
 											</Button>
 											<Button
-												onClick={() => handleDeleteClick(author)}
+												onClick={() => handleDeleteClick(category)}
 												size='icon'
 												variant='ghost'
 												className='text-red-600 hover:bg-red-50 hover:text-red-700'
@@ -440,10 +456,8 @@ export default function ManageAuthors() {
 							))
 						) : (
 							<TableRow>
-								<TableCell className='text-center py-8' colSpan={4}>
-									{isSearchMode
-										? `Không tìm thấy tác giả nào với từ khóa "${debouncedSearch}"`
-										: 'Không tìm thấy tác giả nào'}
+								<TableCell className='text-center py-8' colSpan={5}>
+									Không tìm thấy thể loại nào
 								</TableCell>
 							</TableRow>
 						)}
@@ -456,21 +470,21 @@ export default function ManageAuthors() {
 
 			{/* Edit Dialog */}
 			<Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-				<DialogContent className='max-w-2xl'>
+				<DialogContent className='max-w-2xl max-h-[90vh] overflow-y-auto'>
 					<DialogHeader>
-						<DialogTitle>Chỉnh sửa tác giả</DialogTitle>
-						<DialogDescription>Cập nhật thông tin tác giả</DialogDescription>
+						<DialogTitle>Chỉnh sửa thể loại</DialogTitle>
+						<DialogDescription>Cập nhật thông tin thể loại</DialogDescription>
 					</DialogHeader>
 					<Form {...editForm}>
 						<form onSubmit={editForm.handleSubmit(handleUpdate)} className='space-y-4'>
 							<FormField
 								control={editForm.control}
-								name='author_name'
+								name='name'
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Tên tác giả</FormLabel>
+										<FormLabel>Tên thể loại</FormLabel>
 										<FormControl>
-											<Input placeholder='Nhập tên tác giả' {...field} />
+											<Input placeholder='Nhập tên thể loại' {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -478,30 +492,30 @@ export default function ManageAuthors() {
 							/>
 							<FormField
 								control={editForm.control}
-								name='nationality'
+								name='parent_id'
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Quốc tịch</FormLabel>
-										<FormControl>
-											<Input placeholder='Nhập quốc tịch' {...field} />
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={editForm.control}
-								name='bio'
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Tiểu sử</FormLabel>
-										<FormControl>
-											<Textarea
-												placeholder='Nhập tiểu sử tác giả'
-												className='min-h-[120px]'
-												{...field}
-											/>
-										</FormControl>
+										<FormLabel>Thể loại cha (tùy chọn)</FormLabel>
+										<Select
+											onValueChange={(value) => field.onChange(value === 'none' ? null : value)}
+											value={field.value || 'none'}
+										>
+											<FormControl>
+												<SelectTrigger>
+													<SelectValue placeholder='Chọn thể loại cha' />
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												<SelectItem value='none'>Không có</SelectItem>
+												{categories
+													?.filter((cat) => cat.id !== selectedCategory?.id)
+													.map((cat) => (
+														<SelectItem key={cat.id} value={cat.id}>
+															{cat.name}
+														</SelectItem>
+													))}
+											</SelectContent>
+										</Select>
 										<FormMessage />
 									</FormItem>
 								)}
@@ -523,10 +537,10 @@ export default function ManageAuthors() {
 			<AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>Xác nhận xóa tác giả</AlertDialogTitle>
+						<AlertDialogTitle>Xác nhận xóa thể loại</AlertDialogTitle>
 						<AlertDialogDescription>
-							Bạn có chắc chắn muốn xóa tác giả "{selectedAuthor?.author_name}"? Hành động này không thể
-							hoàn tác.
+							Bạn có chắc chắn muốn xóa thể loại "{selectedCategory?.name}"? Hành động này không thể hoàn
+							tác.
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>

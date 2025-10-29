@@ -102,11 +102,11 @@ export default function ReaderTypesPage() {
 	}
 
 	return (
-		<div className='min-h-screen bg-gray-50 p-6'>
-			<div className='max-w-7xl mx-auto'>
+		<div>
+			<div>
 				{/* Header */}
 				<div className='mb-6'>
-					<h1 className='text-2xl font-bold text-gray-800'>Cài đặt quyền mượn sách</h1>
+					<h1 className='text-2xl font-bold text-gray-500'>Cài đặt quyền mượn sách</h1>
 				</div>
 
 				{/* Table */}
@@ -231,7 +231,7 @@ export default function ReaderTypesPage() {
 															onClick={() => onSubmit(readerType.id)}
 															size='icon'
 															variant='ghost'
-															className='text-green-600 hover:bg-green-50 hover:text-green-700'
+															className='text-green-600 hover:bg-green-50 hover:text-green-300 cursor-pointer'
 															disabled={isPending}
 														>
 															<Save size={18} />
@@ -252,7 +252,7 @@ export default function ReaderTypesPage() {
 											<>
 												<TableCell>
 													<div className='flex items-center gap-2'>
-														<Badge>
+														<Badge className=' bg-green-500 hover:bg-green-600'>
 															<span className='font-medium'>
 																{getReaderTypeDisplayName(readerType.typeName)}
 															</span>
