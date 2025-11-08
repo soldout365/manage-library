@@ -1,8 +1,8 @@
 import * as React from 'react'
 
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover'
 import { Check, ChevronsUpDown } from 'lucide-react'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -36,66 +36,51 @@ export function Combobox({
 
 	const filteredOptions = React.useMemo(() => {
 		if (!searchValue.trim()) return options
+
 		return options.filter((option) => option.label.toLowerCase().includes(searchValue.toLowerCase()))
 	}, [searchValue, options])
-
 	return (
-		<Popover>
-			<PopoverTrigger asChild>
+		<Popover open={open} onOpenChange={setOpen}>
+			<PopoverTrigger>
 				<Button
-					type='button'
 					variant='outline'
 					role='combobox'
 					aria-expanded={open}
-					disabled={disabled}
 					className={cn(
-						'w-full h-11 justify-between rounded-lg border border-input bg-background px-3 py-2 text-sm shadow-sm transition-colors',
-						'hover:bg-accent hover:text-accent-foreground',
-						'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
-						'disabled:cursor-not-allowed disabled:opacity-50',
-						!selectedOption && 'text-muted-foreground',
+						'w-full !h-12 rounded-sm px-4 border border-primary focus:outline-none focus:ring-2 focus:ring-primary justify-between',
+						{ 'text-muted-foreground': !selectedOption },
 						className
 					)}
 				>
-					<span className='truncate'>{selectedOption ? selectedOption.label : placeholder}</span>
-					<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+					{selectedOption ? selectedOption.label : placeholder}
+					<ChevronsUpDown className='opacity-50' />
 				</Button>
 			</PopoverTrigger>
-			<PopoverContent className='w-[var(--radix-popover-trigger-width)] p-0 shadow-lg' asChild>
-				<Command shouldFilter={false}>
+			<PopoverContent className='!w-full p-0' align='start'>
+				<Command>
 					<CommandInput
 						placeholder={searchPlaceholder}
-						className='h-10 border-none focus:ring-0'
+						className='h-9'
 						value={searchValue}
 						onValueChange={setSearchValue}
 					/>
-					<CommandList className='max-h-[300px]'>
-						<CommandEmpty className='py-6 text-center text-sm text-muted-foreground'>
-							{emptyText}
-						</CommandEmpty>
+					<CommandList>
+						<CommandEmpty>{emptyText}</CommandEmpty>
 						<CommandGroup>
 							{filteredOptions.map((option) => (
 								<CommandItem
 									key={option.value}
-									value={option.value}
+									value={option.label}
 									onSelect={() => {
-										onValueChange?.(option.value === value ? '' : option.value)
+										onValueChange?.(option.value)
 										setOpen(false)
 										setSearchValue('')
 									}}
-									className={cn(
-										'flex items-center gap-2 px-2 py-2 cursor-pointer',
-										'hover:bg-accent hover:text-accent-foreground',
-										'aria-selected:bg-accent aria-selected:text-accent-foreground'
-									)}
 								>
+									{option.label}
 									<Check
-										className={cn(
-											'h-4 w-4 shrink-0 transition-opacity',
-											value === option.value ? 'opacity-100' : 'opacity-0'
-										)}
+										className={cn('ml-auto', value === option.value ? 'opacity-100' : 'opacity-0')}
 									/>
-									<span className='flex-1 truncate'>{option.label}</span>
 								</CommandItem>
 							))}
 						</CommandGroup>
