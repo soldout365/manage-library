@@ -22,7 +22,7 @@ import {
 	AlertDialogTitle
 } from '@/components/ui/alert-dialog'
 import { Sheet } from '@/components/ui/sheet'
-import CreateForm from '../create-form'
+import CreateForm from '../one-for-all-form'
 interface ReaderTableProps {
 	readers: ReaderType[]
 	// renderActions: (reader: ReaderType) => React.ReactNode

@@ -38,22 +38,16 @@ const registerSchema = z
 		role: z.enum(['admin', 'reader']),
 		accountStatus: z.enum(['active', 'banned', 'suspended']),
 
-		cardIssueDate: z.string().optional(), // ← Thêm .optional()
-		cardExpiryDate: z.string().optional() // ← Thêm .optional()
+		cardIssueDate: z.string().optional(),
+		cardExpiryDate: z.string().optional()
 	})
-	.refine(
-		(data) => {
-			// Nếu role là reader thì bắt buộc phải có card dates
-			if (data.role === 'reader') {
-				return data.cardIssueDate && data.cardExpiryDate
-			}
-			return true
-		},
-		{
-			message: 'Card dates are required for readers',
-			path: ['cardIssueDate']
+	.refine((data) => {
+		// Nếu role là reader thì bắt buộc phải có card dates
+		if (data.role === 'reader') {
+			return data.cardIssueDate && data.cardExpiryDate
 		}
-	)
+		return true
+	})
 
 type RegisterSchemaType = z.infer<typeof registerSchema>
 

@@ -36,3 +36,16 @@ export type PublisherBookRefType = Pick<
 export type PublisherParams = QueryParamsType & {
 	search?: string
 }
+export type CreatePublisherType = Pick<
+	PublisherType,
+	| 'publisherName'
+	| 'email'
+	| 'address'
+	| 'phone'
+	| 'website'
+	| 'description'
+	| 'isActive'
+	| 'establishedDate'
+	| 'country'
+>
+export type UpdatePublisherType = Partial<CreatePublisherType>

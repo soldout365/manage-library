@@ -12,6 +12,9 @@ import RootLayout from './layouts/root-layout'
 import ReaderTypesPage from './pages/reader-types/page'
 import ManageAuthors from './pages/(managements)/authors/page'
 import BookManagement from './pages/books/page'
+import ManagePublishersPage from './pages/(managements)/publishers/page'
+import ManageLocationsPage from './pages/(managements)/locations/page'
+import ManageBookCategories from './pages/(managements)/book-categories/page'
 const routes = createBrowserRouter([
 	{
 		path: '/login',
@@ -69,6 +72,18 @@ const routes = createBrowserRouter([
 			{
 				path: '/books',
 				element: <BookManagement />
+			},
+			{
+				path: '/publishers',
+				element: <ManagePublishersPage />
+			},
+			{
+				path: '/locations',
+				element: <ManageLocationsPage />
+			},
+			{
+				path: '/book-categories',
+				element: <ManageBookCategories />
 			}
 		]
 	}

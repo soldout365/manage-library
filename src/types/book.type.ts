@@ -8,6 +8,11 @@ export enum EBookType {
 	EBOOK = 'ebook'
 }
 
+export enum EPhysicalType {
+	BORROWABLE = 'borrowable',
+	LIBRARY_USE = 'library_use'
+}
+
 export enum EView {
 	ASC = 'asc',
 	DESC = 'desc'
@@ -50,16 +55,16 @@ export type BookCreateType = {
 	title: string
 	isbn: string
 	publish_year: number
-	edition: string
-	description: string | null
 	cover_image: string | null
+	edition?: string | null
+	description?: string | null
 	language: string
 	page_count: number
-	book_type: string
-	physical_type: string
+	book_type: EBookType
+	physical_type?: EPhysicalType
 	publisher_id: string
-	category_id: string
-	main_category_id: string
-	author_ids: string[]
-	grade_level_ids: string[]
+	category_id?: string
+	main_category_id?: string
+	author_ids?: string[]
+	grade_level_ids?: string[]
 }

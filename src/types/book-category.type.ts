@@ -11,3 +11,14 @@ export type BookCategoryType = {
 export type BookCategoryBookRefType = Pick<BookCategoryType, 'id' | 'name' | 'parent_id' | 'createdAt' | 'updatedAt'>
 
 export type BookCategoryParamsType = QueryParamsType
+
+export type BookCategoryCreateType = {
+	name: string
+	parent_id?: string | null
+}
+
+export type BookCategoryUpdateType = Partial<BookCategoryCreateType>
+
+export type SearchBookCategoryParamsType = QueryParamsType & {
+	q: string
+}
