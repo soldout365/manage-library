@@ -1,12 +1,12 @@
 export const getReaderTypeDisplayName = (readerTypeName: string) => {
 	switch (readerTypeName) {
 		case 'student':
-			return 'Sinh viên';
+			return 'Sinh viên'
 		case 'teacher':
-			return 'Giáo viên';
+			return 'Giáo viên'
 		case 'staff':
-			return 'Nhân viên';
+			return 'Nhân viên'
 		default:
-			return 'Chưa có thông tin';
+			return 'Chưa có thông tin'
 	}
-};
+}

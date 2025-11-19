@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { locationApi } from '@/apis/loaction.api'
+import { locationApi } from '@/apis/location.api'
 
 export const useDeleteUser = () => {
 	return useMutation({

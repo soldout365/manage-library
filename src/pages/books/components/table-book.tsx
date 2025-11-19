@@ -3,13 +3,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 
 import { Badge } from '@/components/ui/badge'
 import BookCover from '@/components/book-cover'
-import type { BookType } from '@/types/book.type'
+import { EBookType, type BookType } from '@/types/book.type'
 import { Button } from '@/components/ui/button'
 import DeleteBookDialog from './delete-book-dialog'
 import EditBook from './edit-book'
 import { useBookStore } from '@/stores/book-store'
 import { useDeleteBook } from '@/hooks/books/useGetBooks'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 interface TableBookProps {
 	books: BookType[]
@@ -17,6 +18,7 @@ interface TableBookProps {
 }
 
 const TableBook = ({ books, renderActions }: TableBookProps) => {
+	const navigate = useNavigate()
 	const [bookDelete, setBookDelete] = useState<{
 		book: BookType
 		isOpen: boolean
@@ -39,6 +41,14 @@ const TableBook = ({ books, renderActions }: TableBookProps) => {
 				setBookDelete(null)
 			}
 		})
+	}
+
+	const handleViewBook = (book: BookType) => {
+		if (book.book_type === EBookType.EBOOK) {
+			navigate(`/books/ebook/${book.id}`)
+		} else {
+			navigate(`/books/physical/${book.id}`)
+		}
 	}
 
 	return (
@@ -76,7 +86,10 @@ const TableBook = ({ books, renderActions }: TableBookProps) => {
 								</TableCell>
 								<TableCell className='font-medium'>
 									<div className='flex flex-col'>
-										<button className='text-left font-semibold hover:text-blue-600 hover:underline transition-colors cursor-pointer'>
+										<button
+											className='text-left font-semibold hover:text-blue-600 hover:underline transition-colors cursor-pointer'
+											onClick={() => handleViewBook(book)}
+										>
 											{book.title}
 										</button>
 										{book.description && (

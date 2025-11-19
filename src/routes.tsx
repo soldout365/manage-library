@@ -15,6 +15,8 @@ import BookManagement from './pages/books/page'
 import ManagePublishersPage from './pages/(managements)/publishers/page'
 import ManageLocationsPage from './pages/(managements)/locations/page'
 import ManageBookCategories from './pages/(managements)/book-categories/page'
+import EbookPage from './pages/books/ebook/[id]/page'
+import PhysicalPage from './pages/books/physical/[id]/page'
 const routes = createBrowserRouter([
 	{
 		path: '/login',
@@ -84,6 +86,14 @@ const routes = createBrowserRouter([
 			{
 				path: '/book-categories',
 				element: <ManageBookCategories />
+			},
+			{
+				path: '/books/ebook/:id',
+				element: <EbookPage />
+			},
+			{
+				path: '/books/physical/:id',
+				element: <PhysicalPage />
 			}
 		]
 	}
