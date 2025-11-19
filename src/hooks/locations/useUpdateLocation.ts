@@ -1,4 +1,4 @@
-import { locationApi } from './../../apis/loaction.api'
+import { locationApi } from '../../apis/location.api'
 import { useMutation } from '@tanstack/react-query'
 import type { UpdateLocationType } from '@/types/location.type'
 

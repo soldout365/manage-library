@@ -29,8 +29,8 @@ export type BookType = {
 	cover_image: string | null
 	language: string
 	page_count: number
-	book_type: string
-	physical_type: string
+	book_type: EBookType
+	physical_type: EPhysicalType
 	publisher_id: string
 	publisher: PublisherBookRefType
 	category_id: null

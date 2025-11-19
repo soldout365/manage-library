@@ -48,7 +48,6 @@ type BookFormProps = {
 
 const BookForm = ({ onClose, bookData }: BookFormProps) => {
 	const { authors, publishers, bookCategories } = useBookStore()
-	console.log('🚀 ~ BookForm ~ bookCategories:', bookCategories)
 
 	const queryClient = useQueryClient()
 	const queryParams = useQueryParams()
