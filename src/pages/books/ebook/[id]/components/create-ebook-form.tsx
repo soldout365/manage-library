@@ -62,7 +62,7 @@ const CreateEbookForm = ({ bookTitle, onClose, open }: CreateEbookFormProps) => 
 			const payload: EbookCreateType = {
 				book_id: bookId,
 				file_path: fileUploaded.filePath,
-				file_format: 'PDF',
+				file_format: fileUploaded.filePath.split('.').pop()?.toUpperCase() || 'PDF',
 				file_size: Number(fileUploaded.fileSize)
 			}
 			mutationCreateEbook.mutate(payload, {
