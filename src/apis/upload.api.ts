@@ -14,5 +14,16 @@ export const uploadApi = {
 			responseType: 'blob'
 		})
 		return response.data
+	},
+
+	// update file pdf
+	upload: async (data: FormData): Promise<UploadResponseType> => {
+		const response = await instance.post<UploadResponseType>('/api/uploads/upload', data, {
+			headers: {
+				'Content-Type': 'multipart/form-data'
+			}
+		})
+
+		return response.data
 	}
 }

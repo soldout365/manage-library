@@ -9,13 +9,44 @@ import type { PhysicalBook } from '@/types/physical-copies.type'
 import { getStatusTypeName } from '@/utils/getStatusTypeName'
 import { statusPhysicalcopy } from '@/utils/statusPhysicalCopy'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import DeletePhysicalCopyDialog from './delete-physical-copy-dialog'
+import { useState } from 'react'
+
+import { createSearchParams, useNavigate, useParams } from 'react-router-dom'
+import type { BookType } from '@/types/book.type'
+import PaginationWrapper from '@/components/pagination-wrapper'
 
 interface PhysicalCopyListCardProps {
 	physicalCopyData: PaginationType<PhysicalBook> | undefined
 	bookTitle?: string
+	bookData?: BookType | null
+	params?: any
 }
 
-const PhysicalCopyListCard = ({ physicalCopyData }: PhysicalCopyListCardProps) => {
+const PhysicalCopyListCard = ({ physicalCopyData, bookTitle, params }: PhysicalCopyListCardProps) => {
+	const navigate = useNavigate()
+	const { id } = useParams()
+
+	//state for delete physical book dialog
+	const [deletePhysicalCopyState, setDeletePhysicalCopyState] = useState<{
+		open: boolean
+		physicalCopy: PhysicalBook | null
+	}>({
+		open: false,
+		physicalCopy: null
+	})
+
+	//handle change page
+	const handleChangePage = (newPage: number) => {
+		navigate({
+			pathname: `/books/physical/${id}`,
+			search: createSearchParams({
+				...params,
+				page: newPage.toString()
+			}).toString()
+		})
+	}
+
 	if (!physicalCopyData) return null
 
 	const hasPhysicalCopy = physicalCopyData?.meta?.totalItems > 0
@@ -104,7 +135,7 @@ const PhysicalCopyListCard = ({ physicalCopyData }: PhysicalCopyListCardProps) =
 													const status = statusPhysicalcopy(physicalCopy.status)
 													return (
 														<div
-															className={`flex items-center gap-1 px-2 py-1 text-${status.color}-600 border-${status.color}-600 font-medium`}
+															className={`flex items-center gap-1 px-2 py-1 text-${status.color}-600 border-${status.color}-600`}
 														>
 															{status.icon}
 															<span>{status.text}</span>
@@ -120,11 +151,11 @@ const PhysicalCopyListCard = ({ physicalCopyData }: PhysicalCopyListCardProps) =
 														<span
 															className={`
           px-2 py-0.5 border text-sm font-medium rounded-full  
-          ${status.color === 'green' ? 'bg-green-100 text-green-600' : ''}
-          ${status.color === 'blue' ? 'bg-blue-100 text-blue-600' : ''}
-          ${status.color === 'yellow' ? 'bg-yellow-100 text-yellow-600' : ''}
-          ${status.color === 'red' ? 'bg-red-100 text-red-600' : ''}
-          ${status.color === 'gray' ? 'bg-gray-100 text-gray-600' : ''}
+          ${status.color === 'green' ? 'bg-green-100 text-green-800' : ''}
+          ${status.color === 'blue' ? 'bg-blue-100 text-blue-800' : ''}
+          ${status.color === 'yellow' ? 'bg-yellow-100 text-yellow-800' : ''}
+          ${status.color === 'red' ? 'bg-red-100 text-red-800' : ''}
+          ${status.color === 'gray' ? 'bg-gray-100 text-gray-800' : ''}
         `}
 														>
 															{status.text}
@@ -151,6 +182,12 @@ const PhysicalCopyListCard = ({ physicalCopyData }: PhysicalCopyListCardProps) =
 														variant={'ghost'}
 														size={'sm'}
 														className='text-destructive hover:text-destructive hover:bg-red-50'
+														onClick={() =>
+															setDeletePhysicalCopyState({
+																open: true,
+																physicalCopy
+															})
+														}
 													>
 														<Trash2 />
 													</Button>
@@ -164,6 +201,18 @@ const PhysicalCopyListCard = ({ physicalCopyData }: PhysicalCopyListCardProps) =
 					</div>
 				)}
 			</CardContent>
+
+			<DeletePhysicalCopyDialog
+				open={deletePhysicalCopyState.open}
+				physicalCopy={deletePhysicalCopyState.physicalCopy}
+				onClose={() => setDeletePhysicalCopyState({ open: false, physicalCopy: null })}
+			/>
+			{/* pagination */}
+			<PaginationWrapper
+				currentData={physicalCopies?.length || 0}
+				onChangePage={handleChangePage}
+				currentMeta={physicalCopyData?.meta}
+			/>
 		</Card>
 	)
 }

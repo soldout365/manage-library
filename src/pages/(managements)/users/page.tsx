@@ -17,6 +17,7 @@ import CreateForm from './components/one-for-all-form'
 import AdminTable from './components/table/admin-table'
 import ReaderTable from './components/table/reader-table'
 import { useSearch } from '../../../hooks/useSearch'
+import UsersLoadingSkeleton from '@/components/LoadingSkeleton'
 
 const UserManagement = () => {
 	const [isCreateSheetOpen, setIsCreateSheetOpen] = useState<boolean>(false)
@@ -25,10 +26,16 @@ const UserManagement = () => {
 
 	const navigate = useNavigate()
 
-	const { data: readersData } = useGetReaders(params as GetReadersParamsType, type === 'reader')
+	const { data: readersData, isLoading: isReadersLoading } = useGetReaders(
+		params as GetReadersParamsType,
+		type === 'reader'
+	)
 	const readers = readersData?.data
 
-	const { data: usersData } = useGetUsers({ ...params, type: ERole.ADMIN } as GetUsersParamsType, type === 'admin')
+	const { data: usersData, isLoading: isUsersLoading } = useGetUsers(
+		{ ...params, type: ERole.ADMIN } as GetUsersParamsType,
+		type === 'admin'
+	)
 	const users = usersData?.data
 
 	const currentMeta = type === 'reader' || !type ? readersData?.meta : usersData?.meta
@@ -84,6 +91,13 @@ const UserManagement = () => {
 			})
 		}
 	})
+
+	if (!readersData && !usersData) {
+		return null
+	}
+	if (isReadersLoading || isUsersLoading) {
+		return <UsersLoadingSkeleton />
+	}
 
 	return (
 		<>

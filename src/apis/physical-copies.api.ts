@@ -11,5 +11,8 @@ export const physicalCopiesApi = {
 			params
 		})
 		return response.data
+	},
+	deletePhysicalCopy: async (physicalCopyId: string): Promise<void> => {
+		await instance.delete<void>(`api/physical-copies/${physicalCopyId}`)
 	}
 }

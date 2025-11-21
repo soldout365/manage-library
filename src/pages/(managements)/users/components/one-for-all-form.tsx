@@ -276,8 +276,6 @@ const CreateForm = ({ onClose, mode, defaultValues, readerId, userId }: CreateFo
 		setRoleState(type === 'admin' ? 'admin' : 'reader')
 	}, [type])
 
-	console.log('errors', form.formState.errors)
-
 	return (
 		<SheetContent className='p-0'>
 			<ScrollArea className='h-[90vh]'>

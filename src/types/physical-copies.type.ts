@@ -1,4 +1,7 @@
+import type { QueryParamsType } from './common.type'
 import type { LocationType } from './location.type'
+
+export type PhysicalCopyQueryParamsType = QueryParamsType
 
 export type PhysicalBook = {
 	id: string
