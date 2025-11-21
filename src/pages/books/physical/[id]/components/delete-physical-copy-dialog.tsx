@@ -28,7 +28,7 @@ const DeletePhysicalCopyDialog = ({ open, physicalCopy, onClose }: DeletePhysica
 			if (!physicalCopy) return
 
 			await physicalCopiesApi.deletePhysicalCopy(physicalCopy.id)
-			toast.success('Xóa bản photo vật lý thành công.')
+			toast.success('Xóa bản sao vật lý thành công.')
 			onClose()
 			await queryClient.invalidateQueries({
 				queryKey: [physicalCopiesApi.getPhysicalCopyByBookId.name]
