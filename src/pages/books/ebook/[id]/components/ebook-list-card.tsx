@@ -26,7 +26,7 @@ import PaginationWrapper from '@/components/pagination-wrapper'
 interface EbookListCardProps {
 	ebookData?: PaginationType<EBookType>
 	bookTitle: string
-	params?: any
+	params?: EbookQueryParamsType
 }
 
 const EbookListCard = ({ ebookData, bookTitle, params }: EbookListCardProps) => {
