@@ -16,3 +16,10 @@ export type EBookType = {
 	created_at: string
 	updated_at: string
 }
+
+export type EbookCreateType = {
+	book_id: string
+	file_path: string
+	file_size: number
+	file_format: string
+}

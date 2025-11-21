@@ -17,6 +17,7 @@ import { useEffect } from 'react'
 import { usePublishers } from '@/hooks/publishers/useGetPublishers'
 import { useQueryParams } from '@/hooks/useQueryParam'
 import { useSearch } from '@/hooks/useSearch'
+import UsersLoadingSkeleton from '@/components/LoadingSkeleton'
 
 const BookManagement = () => {
 	const navigate = useNavigate()
@@ -24,7 +25,7 @@ const BookManagement = () => {
 
 	const { setPublishers, setAuthors, setBookCategories, isCreateBook, setIsCreateBook, isEditBook } = useBookStore()
 
-	const { data: bookData } = useBooks(params as BookQueryParamsType)
+	const { data: bookData, isLoading: isBooksLoading } = useBooks(params as BookQueryParamsType)
 	const books = bookData?.data
 
 	// handle change page
@@ -102,6 +103,10 @@ const BookManagement = () => {
 		setAuthors,
 		setBookCategories
 	])
+
+	if (isBooksLoading) {
+		return <UsersLoadingSkeleton />
+	}
 
 	return (
 		<>

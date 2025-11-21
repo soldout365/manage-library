@@ -17,7 +17,7 @@ interface PagiantionWapperProps {
 	onChangePage: (page: number) => void
 }
 
-const PagiantionWapper = ({ currentMeta, currentData = 0, onChangePage }: PagiantionWapperProps) => {
+const PaginationWrapper = ({ currentMeta, currentData = 0, onChangePage }: PagiantionWapperProps) => {
 	const totalPages = currentMeta?.totalPages || 0
 	const currentPage = currentMeta?.page || 1
 
@@ -75,12 +75,12 @@ const PagiantionWapper = ({ currentMeta, currentData = 0, onChangePage }: Pagian
 
 	return (
 		<div className='mt-4 space-y-4 flex items-center justify-between'>
-			<div className='text-sm text-muted-foreground text-center'>
+			<div className='text-sm text-muted-foreground text-center ml-2'>
 				Hiển thị {currentData || 0} of {currentMeta.totalItems}{' '}
 				{currentMeta.totalPages > 1 && (
 					<span>
 						{' '}
-						(Trang {currentMeta.page} trên {currentMeta.totalPages})
+						( Trang {currentMeta.page} trên {currentMeta.totalPages} )
 					</span>
 				)}
 			</div>
@@ -139,4 +139,4 @@ const PagiantionWapper = ({ currentMeta, currentData = 0, onChangePage }: Pagian
 	)
 }
 
-export default PagiantionWapper
+export default PaginationWrapper

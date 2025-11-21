@@ -5,33 +5,48 @@ import {
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
-	DialogTitle,
-	DialogTrigger
+	DialogTitle
 } from '@/components/ui/dialog'
-import { Download, Edit, FileText, Plus, Trash2, Upload } from 'lucide-react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Download, Edit, FileText, Plus, Trash2 } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
-import { DialogClose } from '@radix-ui/react-dialog'
-import type { EBookType } from '@/types/ebook.type'
-import type { PaginationType } from '@/types/common.type'
-import { useState } from 'react'
-import { uploadApi } from '@/apis/upload.api'
 import { ebookApi } from '@/apis/ebook.api'
+import { uploadApi } from '@/apis/upload.api'
+import { Button } from '@/components/ui/button'
+import type { PaginationType } from '@/types/common.type'
+import type { EBookType } from '@/types/ebook.type'
+import { DialogClose } from '@radix-ui/react-dialog'
+import { useState } from 'react'
 import { toast } from 'sonner'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import { useQueryClient } from '@tanstack/react-query'
+import CreateEbookForm from './create-ebook-form'
+import DeleteEbookDialog from './delete-ebook-dialog'
+import { createSearchParams, useNavigate, useParams } from 'react-router-dom'
+import PaginationWrapper from '@/components/pagination-wrapper'
 
 interface EbookListCardProps {
 	ebookData?: PaginationType<EBookType>
 	bookTitle: string
+	params?: any
 }
 
-const EbookListCard = ({ ebookData, bookTitle }: EbookListCardProps) => {
-	const queryClient = useQueryClient()
+const EbookListCard = ({ ebookData, bookTitle, params }: EbookListCardProps) => {
+	const { id } = useParams()
+
+	const navigate = useNavigate()
+	//state for ebook download dialog
 	const [ebookState, setEbookState] = useState<{
+		open: boolean
+		ebook: EBookType | null
+	}>({
+		open: false,
+		ebook: null
+	})
+
+	//state for create ebook form
+	const [createEbookOpen, setCreateEbookOpen] = useState(false)
+
+	//state for delete ebook dialog
+	const [deleteEbookState, setDeleteEbookState] = useState<{
 		open: boolean
 		ebook: EBookType | null
 	}>({
@@ -81,10 +96,6 @@ const EbookListCard = ({ ebookData, bookTitle }: EbookListCardProps) => {
 				//increase download count
 				await ebookApi.increaseDownloadCount(ebook.id)
 
-				queryClient.invalidateQueries({
-					queryKey: [ebookApi.getEbookByBookId.name, ebook.book_id]
-				})
-
 				toast.success('Đã tải xuống ebook...')
 
 				setEbookState({ open: false, ebook: null })
@@ -93,6 +104,17 @@ const EbookListCard = ({ ebookData, bookTitle }: EbookListCardProps) => {
 			console.log(error)
 			toast.error('Tải xuống ebook thất bại. Vui lòng thử lại.')
 		}
+	}
+
+	//handle change page
+	const handleChangePage = (newPage: number) => {
+		navigate({
+			pathname: `/books/ebook/${id}`,
+			search: createSearchParams({
+				...params,
+				page: newPage.toString()
+			}).toString()
+		})
 	}
 
 	return (
@@ -105,74 +127,10 @@ const EbookListCard = ({ ebookData, bookTitle }: EbookListCardProps) => {
 					</CardTitle>
 
 					{hasEBook && (
-						<Dialog>
-							<DialogTrigger asChild>
-								<Button>
-									<Plus className='size-4' />
-									Tạo ebook mới
-								</Button>
-							</DialogTrigger>
-
-							<DialogContent className='sm:max-w-[500px]'>
-								<DialogHeader>
-									<DialogTitle>Tạo ebook mới</DialogTitle>
-									<DialogDescription>
-										<p> Thêm phiên bản ebook cho sách {bookTitle}</p>
-									</DialogDescription>
-								</DialogHeader>
-
-								<div className='space-y-4 py-4'>
-									{/* File Upload Section */}
-									<div className='space-y-2'>
-										<Label htmlFor='file-upload'>Chọn file để upload</Label>
-										<div className='border-2 border-dashed rounded-lg p-8 text-center hover:bg-accent transition-colors cursor-pointer'>
-											<Input
-												type='file'
-												id='file-upload'
-												className='hidden'
-												accept='.pdf,.epub'
-											/>
-											<label
-												htmlFor='file-upload'
-												className='cursor-pointer flex flex-col items-center gap-2'
-											>
-												<Upload className='h-12 w-12 text-muted-foreground' />
-												<span className='text-sm text-muted-foreground'>
-													Choose File{' '}
-													<span className='text-muted-foreground/60'>No file chosen</span>
-												</span>
-											</label>
-										</div>
-									</div>
-
-									{/* Format Selection */}
-									<div className='space-y-2'>
-										<Label htmlFor='format'>Định dạng</Label>
-										<Select defaultValue='pdf'>
-											<SelectTrigger id='format'>
-												<SelectValue placeholder='Chọn định dạng' />
-											</SelectTrigger>
-											<SelectContent>
-												<SelectItem value='pdf'>pdf</SelectItem>
-												<SelectItem value='epub'>epub</SelectItem>
-												<SelectItem value='docs'>docs</SelectItem>
-											</SelectContent>
-										</Select>
-									</div>
-								</div>
-
-								<DialogFooter className='gap-2'>
-									<DialogClose asChild>
-										<Button type='button' variant='outline'>
-											Hủy
-										</Button>
-									</DialogClose>
-									<Button type='submit' className='bg-green-600 hover:bg-green-700'>
-										Tạo EBook
-									</Button>
-								</DialogFooter>
-							</DialogContent>
-						</Dialog>
+						<Button onClick={() => setCreateEbookOpen(true)}>
+							<Plus className='size-4' />
+							Tạo ebook mới
+						</Button>
 					)}
 				</div>
 			</CardHeader>
@@ -186,74 +144,10 @@ const EbookListCard = ({ ebookData, bookTitle }: EbookListCardProps) => {
 							Sách này chưa có phiên bản ebook. Hãy tạo ebook đầu tiên.
 						</p>
 
-						<Dialog>
-							<DialogTrigger asChild>
-								<Button>
-									<Plus className='size-4' />
-									Tạo ebook mới
-								</Button>
-							</DialogTrigger>
-
-							<DialogContent className='sm:max-w-[500px]'>
-								<DialogHeader>
-									<DialogTitle>Tạo ebook mới</DialogTitle>
-									<DialogDescription>
-										<p> Thêm phiên bản ebook cho sách {bookTitle}</p>
-									</DialogDescription>
-								</DialogHeader>
-
-								<div className='space-y-4 py-4'>
-									{/* File Upload Section */}
-									<div className='space-y-2'>
-										<Label htmlFor='file-upload'>Chọn file để upload</Label>
-										<div className='border-2 border-dashed rounded-lg p-8 text-center hover:bg-accent transition-colors cursor-pointer'>
-											<Input
-												type='file'
-												id='file-upload'
-												className='hidden'
-												accept='.pdf,.epub'
-											/>
-											<label
-												htmlFor='file-upload'
-												className='cursor-pointer flex flex-col items-center gap-2'
-											>
-												<Upload className='h-12 w-12 text-muted-foreground' />
-												<span className='text-sm text-muted-foreground'>
-													Choose File{' '}
-													<span className='text-muted-foreground/60'>No file chosen</span>
-												</span>
-											</label>
-										</div>
-									</div>
-
-									{/* Format Selection */}
-									<div className='space-y-2'>
-										<Label htmlFor='format'>Định dạng</Label>
-										<Select defaultValue='pdf'>
-											<SelectTrigger id='format'>
-												<SelectValue placeholder='Chọn định dạng' />
-											</SelectTrigger>
-											<SelectContent>
-												<SelectItem value='pdf'>pdf</SelectItem>
-												<SelectItem value='epub'>epub</SelectItem>
-												<SelectItem value='docs'>docs</SelectItem>
-											</SelectContent>
-										</Select>
-									</div>
-								</div>
-
-								<DialogFooter className='gap-2'>
-									<DialogClose asChild>
-										<Button type='button' variant='outline'>
-											Hủy
-										</Button>
-									</DialogClose>
-									<Button type='submit' className='bg-green-600 hover:bg-green-700'>
-										Tạo EBook
-									</Button>
-								</DialogFooter>
-							</DialogContent>
-						</Dialog>
+						<Button onClick={() => setCreateEbookOpen(true)}>
+							<Plus className='size-4' />
+							Tạo ebook mới
+						</Button>
 					</div>
 				)}
 
@@ -297,6 +191,7 @@ const EbookListCard = ({ ebookData, bookTitle }: EbookListCardProps) => {
 												variant={'ghost'}
 												size={'sm'}
 												className='text-destructive hover:text-destructive hover:bg-red-50'
+												onClick={() => setDeleteEbookState({ open: true, ebook })}
 											>
 												<Trash2 />
 											</Button>
@@ -353,6 +248,19 @@ const EbookListCard = ({ ebookData, bookTitle }: EbookListCardProps) => {
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
+
+			<CreateEbookForm open={createEbookOpen} onClose={() => setCreateEbookOpen(false)} bookTitle={bookTitle} />
+			<DeleteEbookDialog
+				open={deleteEbookState.open}
+				ebook={deleteEbookState.ebook}
+				onClose={() => setDeleteEbookState({ open: false, ebook: null })}
+			/>
+			{/* pagination */}
+			<PaginationWrapper
+				currentData={ebooks?.length || 0}
+				onChangePage={handleChangePage}
+				currentMeta={ebookData?.meta}
+			/>
 		</Card>
 	)
 }
