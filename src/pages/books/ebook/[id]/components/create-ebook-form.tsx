@@ -44,19 +44,17 @@ const CreateEbookForm = ({ bookTitle, onClose, open }: CreateEbookFormProps) => 
 			return
 		}
 
-		if (file) {
-			const formData = new FormData()
-			formData.append('file', file)
-			mutationUploadFile.mutate(formData, {
-				onSuccess: (data) => {
-					setFileUploaded(data)
-				},
-				onError: () => {
-					toast.error('Upload file thất bại')
-					onClose()
-				}
-			})
-		}
+		const formData = new FormData()
+		formData.append('file', file)
+		mutationUploadFile.mutate(formData, {
+			onSuccess: (data) => {
+				setFileUploaded(data)
+			},
+			onError: () => {
+				toast.error('Upload file thất bại')
+				onClose()
+			}
+		})
 	}
 
 	const handleSubmit = () => {
