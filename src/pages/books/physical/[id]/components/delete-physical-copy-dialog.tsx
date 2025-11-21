@@ -44,7 +44,7 @@ const DeletePhysicalCopyDialog = ({ open, physicalCopy, onClose }: DeletePhysica
 				<AlertDialogHeader>
 					<DialogTitle>Xác nhận xóa</DialogTitle>
 					<DialogDescription>
-						Bạn có chắc chắn muốn xóa ebook này không? Hành động này không thể hoàn tác.
+						Bạn có chắc chắn muốn xóa bản sao vật lý này không? Hành động này không thể hoàn tác.
 					</DialogDescription>
 				</AlertDialogHeader>
 				{physicalCopy && (
