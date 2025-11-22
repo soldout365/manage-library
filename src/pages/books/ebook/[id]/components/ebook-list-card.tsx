@@ -176,9 +176,6 @@ const EbookListCard = ({ ebookData, bookTitle, params }: EbookListCardProps) => 
 									<TableCell>{new Date(ebook.created_at).toLocaleDateString('vi-VN')}</TableCell>
 									<TableCell>
 										<div className='flex items-center gap-2'>
-											<Button variant={'ghost'} size={'sm'}>
-												<Edit />
-											</Button>
 											<Button
 												variant={'ghost'}
 												size={'sm'}

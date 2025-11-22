@@ -44,7 +44,7 @@ const DeletePhysicalCopyDialog = ({ open, physicalCopy, onClose }: DeletePhysica
 				<AlertDialogHeader>
 					<DialogTitle>Xác nhận xóa</DialogTitle>
 					<DialogDescription>
-						Bạn có chắc chắn muốn xóa ebook này không? Hành động này không thể hoàn tác.
+						Bạn có chắc chắn muốn xóa bản sao vật lý này không? Hành động này không thể hoàn tác.
 					</DialogDescription>
 				</AlertDialogHeader>
 				{physicalCopy && (
@@ -67,7 +67,7 @@ const DeletePhysicalCopyDialog = ({ open, physicalCopy, onClose }: DeletePhysica
 					</DialogClose>
 					<Button variant='destructive' className='gap-1' onClick={handleDeletePhysicalBook}>
 						<Trash2 size={16} />
-						Xóa ebook
+						Xóa bản sao vật lý
 					</Button>
 				</DialogFooter>
 			</DialogContent>

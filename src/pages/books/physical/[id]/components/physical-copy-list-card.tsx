@@ -8,13 +8,13 @@ import type { PaginationType } from '@/types/common.type'
 import type { PhysicalBook } from '@/types/physical-copies.type'
 import { getStatusTypeName } from '@/utils/getStatusTypeName'
 import { statusPhysicalcopy } from '@/utils/statusPhysicalCopy'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import DeletePhysicalCopyDialog from './delete-physical-copy-dialog'
 import { useState } from 'react'
 
 import { createSearchParams, useNavigate, useParams } from 'react-router-dom'
 import type { BookType } from '@/types/book.type'
 import PaginationWrapper from '@/components/pagination-wrapper'
+import CreatePhysicalCopyForm from './create-physical-copy-form'
 
 interface PhysicalCopyListCardProps {
 	physicalCopyData: PaginationType<PhysicalBook> | undefined
@@ -26,6 +26,14 @@ interface PhysicalCopyListCardProps {
 const PhysicalCopyListCard = ({ physicalCopyData, bookTitle, params }: PhysicalCopyListCardProps) => {
 	const navigate = useNavigate()
 	const { id } = useParams()
+
+	const [createPhysicalCopyState, setCreatePhysicalCopyState] = useState<{
+		open: boolean
+		physicalCopy: PhysicalBook | null
+	}>({
+		open: false,
+		physicalCopy: null
+	})
 
 	//state for delete physical book dialog
 	const [deletePhysicalCopyState, setDeletePhysicalCopyState] = useState<{
@@ -63,22 +71,10 @@ const PhysicalCopyListCard = ({ physicalCopyData, bookTitle, params }: PhysicalC
 
 					{/**add button */}
 					{hasPhysicalCopy && (
-						<Dialog>
-							<DialogTrigger asChild>
-								<Button>
-									<Plus className='size-4' />
-									Tạo bản sao vật lý
-								</Button>
-							</DialogTrigger>
-
-							<DialogContent>
-								<DialogHeader>
-									<DialogTitle>Tạo bản sao vật lý</DialogTitle>
-								</DialogHeader>
-
-								<div>Đây là dialog của bạn.</div>
-							</DialogContent>
-						</Dialog>
+						<Button onClick={() => setCreatePhysicalCopyState({ open: true, physicalCopy: null })}>
+							<Plus className='size-4' />
+							Tạo bản sao vật lý
+						</Button>
 					)}
 				</div>
 			</CardHeader>
@@ -89,25 +85,13 @@ const PhysicalCopyListCard = ({ physicalCopyData, bookTitle, params }: PhysicalC
 						<FileText className='size-12 text-muted-foreground' />
 						<h3 className='text-lg font-semibold'>Chưa có bản sao vật lý nào</h3>
 						<p className='text-muted-foreground'>
-							Sách này chưa có phiên bản bản sao vật lý. Hãy tạo bản sao vật lý đầu tiên.
+							Sách này chưa có bản sao vật lý. Hãy tạo bản sao vật lý đầu tiên.
 						</p>
 
-						<Dialog>
-							<DialogTrigger asChild>
-								<Button>
-									<Plus className='size-4' />
-									Tạo bản sao vật lý
-								</Button>
-							</DialogTrigger>
-
-							<DialogContent>
-								<DialogHeader>
-									<DialogTitle>Tạo bản sao vật lý</DialogTitle>
-								</DialogHeader>
-
-								<div>Đây là dialog của bạn.</div>
-							</DialogContent>
-						</Dialog>
+						<Button onClick={() => setCreatePhysicalCopyState({ open: true, physicalCopy: null })}>
+							<Plus className='size-4' />
+							Tạo bản sao vật lý
+						</Button>
 					</div>
 				)}
 
@@ -172,7 +156,7 @@ const PhysicalCopyListCard = ({ physicalCopyData, bookTitle, params }: PhysicalC
 												{new Date(physicalCopy.purchase_date).toLocaleDateString('vi-VN')}
 											</TableCell>
 											<TableCell>{physicalCopy.purchase_price} VND</TableCell>
-											<TableCell>{physicalCopy.condition_details}</TableCell>
+											<TableCell>{physicalCopy.notes}</TableCell>
 											<TableCell>
 												<div className='flex items-center gap-2 justify-end'>
 													<Button variant={'ghost'} size={'sm'}>
@@ -207,6 +191,13 @@ const PhysicalCopyListCard = ({ physicalCopyData, bookTitle, params }: PhysicalC
 				physicalCopy={deletePhysicalCopyState.physicalCopy}
 				onClose={() => setDeletePhysicalCopyState({ open: false, physicalCopy: null })}
 			/>
+
+			<CreatePhysicalCopyForm
+				open={createPhysicalCopyState.open}
+				onClose={() => setCreatePhysicalCopyState({ open: false, physicalCopy: null })}
+				bookTitle={bookTitle}
+			/>
+
 			{/* pagination */}
 			<PaginationWrapper
 				currentData={physicalCopies?.length || 0}

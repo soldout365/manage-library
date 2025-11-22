@@ -35,7 +35,6 @@ export const SearchableAuthorSelectV2 = ({
 	}
 
 	const handleSelectOption = (optionValue: string) => {
-		console.log('✅ Selected:', optionValue)
 		onValueChange(optionValue)
 		setSearchValue('')
 		setOpen(false)
@@ -48,7 +47,6 @@ export const SearchableAuthorSelectV2 = ({
 				type='button'
 				disabled={disabled}
 				onClick={() => {
-					console.log('🔵 Button clicked, current open:', open)
 					setOpen(!open)
 				}}
 				className={cn(
@@ -105,7 +103,6 @@ export const SearchableAuthorSelectV2 = ({
 				<div
 					className='fixed inset-0 z-40'
 					onClick={() => {
-						console.log('🔴 Overlay clicked, closing dropdown')
 						setOpen(false)
 					}}
 				/>

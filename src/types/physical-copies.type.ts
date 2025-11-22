@@ -57,3 +57,18 @@ export type CreatePhysicalBookRes = {
 	created_at: string
 	updated_at: string
 }
+
+export type CreatePhysicalBookReq = Pick<
+	CreatePhysicalBookRes,
+	| 'book_id'
+	| 'barcode'
+	| 'status'
+	| 'current_condition'
+	| 'condition_details'
+	| 'purchase_date'
+	| 'purchase_price'
+	| 'location_id'
+	| 'notes'
+	| 'last_checkup_date'
+	| 'is_archived'
+>

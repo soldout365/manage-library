@@ -1,9 +1,7 @@
 import * as React from 'react'
-
 import { Check, ChevronsUpDown } from 'lucide-react'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
@@ -27,7 +25,7 @@ export function Combobox({
 	searchPlaceholder = 'Search option...',
 	emptyText = 'No option found.',
 	className,
-	disabled
+	disabled = false
 }: ComboboxProps) {
 	const [open, setOpen] = React.useState(false)
 	const [searchValue, setSearchValue] = useState<string>('')
@@ -39,13 +37,16 @@ export function Combobox({
 
 		return options.filter((option) => option.label.toLowerCase().includes(searchValue.toLowerCase()))
 	}, [searchValue, options])
+
 	return (
 		<Popover open={open} onOpenChange={setOpen}>
 			<PopoverTrigger>
 				<Button
+					type='button' // ← THÊM DÒNG NÀY - QUAN TRỌNG!
 					variant='outline'
 					role='combobox'
 					aria-expanded={open}
+					disabled={disabled}
 					className={cn(
 						'w-full !h-12 rounded-sm px-4 border border-primary focus:outline-none focus:ring-2 focus:ring-primary justify-between',
 						{ 'text-muted-foreground': !selectedOption },
@@ -56,7 +57,7 @@ export function Combobox({
 					<ChevronsUpDown className='opacity-50' />
 				</Button>
 			</PopoverTrigger>
-			<PopoverContent className='!w-full p-0' align='start'>
+			<PopoverContent className='w-[var(--radix-popover-trigger-width)] p-0' align='start'>
 				<Command>
 					<CommandInput
 						placeholder={searchPlaceholder}
