@@ -67,7 +67,7 @@ const DeletePhysicalCopyDialog = ({ open, physicalCopy, onClose }: DeletePhysica
 					</DialogClose>
 					<Button variant='destructive' className='gap-1' onClick={handleDeletePhysicalBook}>
 						<Trash2 size={16} />
-						Xóa ebook
+						Xóa bản sao vật lý
 					</Button>
 				</DialogFooter>
 			</DialogContent>

@@ -362,7 +362,6 @@ const BookForm = ({ onClose, bookData }: BookFormProps) => {
 									<SearchableAuthorSelectV2
 										options={allAuthorsOptions || []}
 										onValueChange={(value) => {
-											console.log('🟢 Value changed:', value)
 											const currentIds = field.value || []
 											if (!currentIds.includes(value)) {
 												field.onChange([...currentIds, value])
