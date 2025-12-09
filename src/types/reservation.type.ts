@@ -1,6 +1,6 @@
 export enum EReservationStatus {
 	PENDING = 'pending',
-	FULLFILLED = 'fullfilled',
+	FULFILLED = 'fulfilled',
 	EXPIRED = 'expired',
 	CANCELLED = 'cancelled'
 }
