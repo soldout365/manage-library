@@ -22,9 +22,9 @@ import {
 	AlertDialogTitle
 } from '@/components/ui/alert-dialog'
 import { useBookCategories } from '@/hooks/book-categories/useGetBookCategories'
-import { useCreateBookCategory } from '@/hooks/book-categories/useCreateLocation'
-import { useUpdateBookCategory } from '@/hooks/book-categories/useUpdateLocation'
-import { useDeleteBookCategory } from '@/hooks/book-categories/useDeleteLocation'
+import { useCreateBookCategory } from '@/hooks/book-categories/useCreateBookCategory'
+import { useUpdateBookCategory } from '@/hooks/book-categories/useUpdateBookCate'
+import { useDeleteBookCategory } from '@/hooks/book-categories/useDeleteBookCate'
 import { useQueryClient } from '@tanstack/react-query'
 import { bookCategoryApi } from '@/apis/book-category.api'
 import type { BookCategoryType, BookCategoryCreateType, BookCategoryUpdateType } from '@/types/book-category.type'

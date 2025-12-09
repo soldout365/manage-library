@@ -17,6 +17,7 @@ import ManageLocationsPage from './pages/(managements)/locations/page'
 import ManageBookCategories from './pages/(managements)/book-categories/page'
 import EbookPage from './pages/books/ebook/[id]/page'
 import PhysicalPage from './pages/books/physical/[id]/page'
+import BorrowRecords from './pages/borrow-records/page'
 const routes = createBrowserRouter([
 	{
 		path: '/login',
@@ -94,6 +95,10 @@ const routes = createBrowserRouter([
 			{
 				path: '/books/physical/:id',
 				element: <PhysicalPage />
+			},
+			{
+				path: '/borrow-records',
+				element: <BorrowRecords />
 			}
 		]
 	}
