@@ -114,7 +114,9 @@ const Tabs = () => {
 
 										{/* thoi gian */}
 										<TableCell>
-											<p className='text-sm font-medium'>{10} ngày</p>
+											<p className='text-sm font-medium'>
+												{dayjs(borrowRecord.due_date).diff(dayjs(borrowRecord.borrow_date), 'day')} ngày
+											</p>
 										</TableCell>
 
 										{/* ngay tra */}
